@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+._*
+
+# local tools and outputs
+node_modules/
+__pycache__/
+*.pyc
+.env
+.env.*
+
+# recorder frames (showcase/roam5/rec.js makes them again)
+showcase/roam5/frames/

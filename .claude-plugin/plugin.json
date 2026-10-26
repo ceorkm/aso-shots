@@ -1,0 +1,7 @@
+{
+  "name": "aso-shots",
+  "description": "App Store screenshots that sell. Turns your app's raw screenshots into a store-ready set: copy, three directions, 18 proven styles, exports at App Store and Google Play sizes.",
+  "version": "1.0.0",
+  "author": { "name": "ceorkm" },
+  "keywords": ["app-store", "screenshots", "aso", "google-play", "marketing"]
+}

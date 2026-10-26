@@ -1,0 +1,12 @@
+{
+  "name": "aso-shots",
+  "description": "ASO Shots: App Store screenshots that sell",
+  "owner": { "name": "ceorkm" },
+  "plugins": [
+    {
+      "name": "aso-shots",
+      "source": "./",
+      "description": "Turn your app's raw screenshots into a store-ready App Store and Google Play set."
+    }
+  ]
+}
