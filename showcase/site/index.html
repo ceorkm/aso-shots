@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>App Screenshot Showcase</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f3f0;--card:#ffffff;--fg:#121212;--mut:#73736d;--line:rgba(0,0,0,.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0e0f;--card:#18181a;--fg:#f2f2f0;--mut:#9a9a94;--line:rgba(255,255,255,.08)}}
+:root[data-theme="dark"]{--bg:#0e0e0f;--card:#18181a;--fg:#f2f2f0;--mut:#9a9a94;--line:rgba(255,255,255,.08)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+.hero{padding:88px 0 40px}
+.hero small{font:600 13px Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.hero h1{font:700 clamp(40px,7vw,84px)/1 'Inter Tight',sans-serif;letter-spacing:-.045em;margin:14px 0 18px}
+.hero p{max-width:620px;color:var(--mut);font-size:18px;margin:0}
+.app{margin:56px 0 0;padding:40px 0 8px;border-top:1px solid var(--line)}
+.meta{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+.name{display:flex;align-items:center;gap:14px}
+.dot{width:46px;height:46px;border-radius:13px;flex:none;box-shadow:inset 0 0 0 1px var(--line)}
+.name h2{font:700 30px/1.1 'Inter Tight',sans-serif;letter-spacing:-.03em;margin:0}
+.name span{display:block;color:var(--mut);font-size:15px;margin-top:3px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font:500 13px Inter;color:var(--mut);padding:6px 12px;border-radius:20px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}
+.shots{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,2vw,24px)}
+.shots img,.shots video{width:100%;height:auto;display:block;border-radius:clamp(12px,1.8vw,26px);box-shadow:0 1px 0 var(--line),0 30px 60px rgba(0,0,0,.10);transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.shots img:hover,.shots video:hover{transform:translateY(-6px)}
+footer{padding:72px 0 64px;color:var(--mut);font-size:14px}
+@media (max-width:640px){.hero{padding:48px 0 24px}.shots{gap:8px}}
+</style></head><body>
+<div class="wrap">
+  <section class="hero">
+    <small>App Store screenshots · made with one skill</small>
+    <h1>Seven apps.<br>Seven styles.</h1>
+    <p>Each app uses a different style from the 18-style library, with its own layout, not just new colours. Every set was written, designed, built in code and exported at App Store size (1320 × 2868). The app screens are redrawn UI, and the photos are AI-generated.</p>
+  </section>
+  <div id="apps"></div>
+  <footer>All apps except SubPal are fictional. Sample data is made up. Service logos are their owners' trademarks.</footer>
+</div>
+<script>
+const APPS=[
+ ['roam','Roam','Trip planner','#0E8C8C','Sky Collage Panorama',['Animated 3D globe (Three.js)','3D harbour-town map','New app icon · app-preview video']],
+ ['mise','Mise','Recipes & meal plans','#E8442E','Scrapbook Collage',['Pinned polaroids, handwritten captions','Paper and photo panels','AI food photography']],
+ ['tempo','Tempo','Running coach','#1640D6','Bold Color Blocks + 3D',['A colour per panel','Tilted real phones','Real 3D chrome medals']],
+ ['subpal','SubPal','Subscription tracker','#FFD233','Floating UI',['White + yellow accent','Hero card lifted out of the phone','Real service logos']],
+ ['tally','Tally','Shop inventory','#0B0B0B','Editorial Mono Serif-Mix',['3D monochrome shelf still life','Live stock tags in scan mode','Same shelf, one gap, reorder']],
+ ['murmur','Murmur','AI voice notes','#0478FF','Electric Blue Glass Pills',['Medium headlines fading to pale blue','Phone tilted back','Rim-lit glass pills']],
+ ['perk','Perk','Cashback & rewards','#C6F432','Bubbly Sticker Rewards',['3D coins bursting from a bag','Weekly cashback as 3D coin stacks','Cash-out screen, coin flying out']]];
+document.getElementById('apps').innerHTML=APPS.map(([k,n,c,col,st,tags])=>`
+ <section class="app"><div class="meta">
+   <div class="name">${k=='roam'?'<img class="dot" src="img/roam-icon.svg" alt="Roam app icon">':`<div class="dot" style="background:${col}"></div>`}<div><h2>${n}</h2><span>${c} · <b style="color:var(--fg);font-weight:600">${st}</b></span></div></div>
+   <div class="chips">${tags.map(t=>`<span class="chip">${t}</span>`).join('')}</div></div>
+   <div class="shots">${[1,2,3].map(i=>k=='roam'&&i==1?`<video src="img/roam-1.mp4" poster="img/roam-1.jpg" autoplay muted loop playsinline></video>`:`<img src="img/${k}-${i}.jpg" alt="${n} screenshot ${i}" loading="lazy">`).join('')}</div></section>`).join('');
+</script>
+</body></html>
