@@ -1,0 +1,70 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:transparent}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"./lib/build/three.module.js"}}</script></head><body>
+<script type="module">
+// Roam's 3D map: a small Provençal harbour town (white walls, terracotta roofs), harbour water, boats, trees.
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from './lib/examples/jsm/geometries/RoundedBoxGeometry.js';
+THREE.ColorManagement.legacyMode = false;
+const W = 786, H = 1710;
+const R = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+R.setSize(W, H); R.outputEncoding = THREE.sRGBEncoding; R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(R.domElement);
+const S = new THREE.Scene(); S.background = new THREE.Color(0xE7EEEA); S.fog = new THREE.Fog(0xE7EEEA, 38, 62);
+
+// seeded random so the town is the same every render
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const mat = (c, r = .9) => new THREE.MeshStandardMaterial({ color: c, roughness: r, metalness: 0 });
+
+// harbour: a smooth bay that opens to the right edge (polygon → curve → shape), with a sand rim
+const BAY = [[22,-1.6],[10,-1.4],[8,-2.8],[5.4,-3.6],[2.6,-3],[.8,-1.2],[.3,1.4],[1.2,3.9],[3.4,5.5],[6.4,5.6],[9,6.6],[22,8]];
+const curve = new THREE.CatmullRomCurve3(BAY.map(([x,z]) => new THREE.Vector3(x,0,z)), false, 'centripetal', .5);
+const BP = curve.getPoints(220).map(v => [v.x, v.z]);
+const inPoly = (x, z, P = BP) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) { const [xi, zi] = P[i], [xj, zj] = P[j]; if ((zi > z) !== (zj > z) && x < (xj - xi) * (z - zi) / (zj - zi) + xi) c = !c; } return c; };
+const bay = (x, z) => inPoly(x, z);
+const shape = (scale, y, color) => { const sh = new THREE.Shape(BP.map(([x, z]) => new THREE.Vector2(4 + (x - 4) * scale, 2 + (z - 2) * scale)));
+  const g = new THREE.ShapeGeometry(sh, 64); g.rotateX(Math.PI / 2); const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color, roughness: .6, side: THREE.DoubleSide })); m.position.y = y; m.receiveShadow = true; S.add(m); };
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(90, 90).rotateX(-Math.PI / 2), mat(0xE2E8E1, .95)); ground.receiveShadow = true; S.add(ground);
+shape(1.07, .004, 0xEEDFC2); shape(1.0, .008, 0x7CCBC6); shape(.72, .010, 0x63BCB8);
+
+// roads: white ribbons
+const roads = [[[-22, -4.6], [0.4, -4]], [[-1.4, -28], [-.9, 16]], [[-22, -11], [22, -10]], [[-9, -28], [-8.4, 16]], [[0, -4.2], [12, -6.4]], [[-22, 9], [0, 8.6]], [[8, -28], [10.5, -6.8]]];
+roads.forEach(([[x1, z1], [x2, z2]]) => {
+  const len = Math.hypot(x2 - x1, z2 - z1), r = new THREE.Mesh(new THREE.BoxGeometry(len, .03, .5), mat(0xFFFFFF, .7));
+  r.position.set((x1 + x2) / 2, .014, (z1 + z2) / 2); r.rotation.y = -Math.atan2(z2 - z1, x2 - x1); r.receiveShadow = true; S.add(r);
+});
+const nearRoad = (x, z) => roads.some(([[x1, z1], [x2, z2]]) => { const vx = x2 - x1, vz = z2 - z1, t = Math.max(0, Math.min(1, ((x - x1) * vx + (z - z1) * vz) / (vx * vx + vz * vz))); return Math.hypot(x - (x1 + t * vx), z - (z1 + t * vz)) < .9; });
+
+// buildings: white boxes with terracotta roof slabs
+const wallM = [mat(0xFBFAF6), mat(0xF4EFE6), mat(0xEDE6DA)], roofM = [mat(0xD98A68, .8), mat(0xC9765A, .8), mat(0xE2A07F, .8)];
+for (let gx = -20; gx <= 20; gx += 1.3) for (let gz = -26; gz <= 14; gz += 1.3) {
+  const x = gx + (rnd() - .5) * .4, z = gz + (rnd() - .5) * .4;
+  if (bay(x, z) || bay(x + .9, z) || bay(x, z + .9) || bay(x - .9, z) || bay(x, z - .9) || nearRoad(x, z) || rnd() < .22) continue;
+  if (Math.hypot(x + 6, z - 3) < 2.6) continue; // park
+  const w = .7 + rnd() * .45, d = .7 + rnd() * .45, h = .35 + rnd() * rnd() * 1.4;
+  const b = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 2, .04), wallM[Math.floor(rnd() * 3)]); b.position.set(x, h / 2, z); b.castShadow = b.receiveShadow = true; S.add(b);
+  const roof = new THREE.Mesh(new RoundedBoxGeometry(w + .04, .09, d + .04, 2, .03), roofM[Math.floor(rnd() * 3)]); roof.position.set(x, h + .03, z); roof.castShadow = true; S.add(roof);
+}
+// trees: soft green clusters (park + scattered)
+const treeM = [mat(0x9BC79C, .85), mat(0x85B98A, .85), mat(0xAED4A9, .85)];
+const tree = (x, z, s = 1) => { const t = new THREE.Mesh(new THREE.SphereGeometry(.32 * s, 16, 12), treeM[Math.floor(rnd() * 3)]); t.position.set(x, .3 * s, z); t.scale.y = .85; t.castShadow = true; S.add(t); };
+for (let i = 0; i < 26; i++) { const a = rnd() * 6.28, r = rnd() * 2.4; tree(-6 + Math.cos(a) * r, 3 + Math.sin(a) * r, .8 + rnd() * .6); }
+for (let i = 0; i < 40; i++) { const x = (rnd() - .5) * 30, z = -18 + rnd() * 28; if (!bay(x, z) && !nearRoad(x, z)) tree(x, z, .5 + rnd() * .4); }
+// boats in the harbour + a small quay
+const boat = (x, z, r) => { const g = new THREE.Group(); const hull = new THREE.Mesh(new RoundedBoxGeometry(.9, .16, .32, 2, .07), mat(0xFFFFFF, .5)); hull.position.y = .02; g.add(hull);
+  const cab = new THREE.Mesh(new RoundedBoxGeometry(.32, .14, .22, 2, .04), mat(0x0E8C8C, .6)); cab.position.set(-.08, .14, 0); g.add(cab); g.position.set(x, -.06, z); g.rotation.y = r; g.traverse(o => o.castShadow = true); S.add(g); };
+[[3.2, 1.4, .3], [4.6, 2.6, -.5], [5.6, .4, .9], [2.6, 3.4, 1.4], [7.4, 2.2, .1]].forEach(b => boat(...b));
+const quay = new THREE.Mesh(new THREE.BoxGeometry(2.6, .1, .35), mat(0xF1E6CF)); quay.position.set(3.2, -.02, -1.9); quay.rotation.y = .25; S.add(quay);
+
+// camera: pitched like a 3D maps view
+const cam = new THREE.PerspectiveCamera(34, W / H, .1, 120); cam.position.set(1.6, 27, 25.5); cam.lookAt(1.4, 0, 1.4);
+const sun = new THREE.DirectionalLight(0xFFF6EA, 1.05); sun.position.set(-10, 18, 8); sun.castShadow = true; sun.shadow.mapSize.set(4096, 4096);
+Object.assign(sun.shadow.camera, { left: -22, right: 22, top: 22, bottom: -22, far: 60 }); sun.shadow.radius = 3; sun.shadow.bias = -.0005; S.add(sun);
+S.add(new THREE.HemisphereLight(0xFFFFFF, 0xB9C9C0, .5));
+R.render(S, cam);
+
+// screen positions for the HTML pins
+const P = { cafe: [-2.2, -3.2], food: [2.2, -6.6], stay: [-4.9, -8.4], beach: [7.6, -.6], boat: [4.2, 1.6], walk: [-6, 3], food2: [.6, 3.6] }, out = {};
+for (const [k, [x, z]] of Object.entries(P)) { const p = new THREE.Vector3(x, .4, z).project(cam); out[k] = [+((p.x + 1) / 2 * W).toFixed(1), +((1 - p.y) / 2 * H).toFixed(1)]; }
+window.__pos = out; window.__done = true;
+</script></body></html>

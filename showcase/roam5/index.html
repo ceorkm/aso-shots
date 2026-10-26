@@ -1,0 +1,135 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Roam Sky Panorama</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,800&family=Urbanist:wght@600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e3e3e3;--fg:#141414;--mut:#666;--teal:#0E8C8C;--sand:#FFE7A8;--ink:#111318}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 Inter,system-ui,sans-serif}
+header{max-width:1960px;margin:0 auto;padding:28px 16px 6px}
+h1{font:600 21px/1.2 Inter;margin:0 0 6px}
+header p{margin:0;color:var(--mut)}
+#wrap{overflow:hidden;max-width:1960px;margin:0 auto;padding:16px}
+#stage{position:relative;width:1849px;height:1311px;transform-origin:0 0}
+.panel{position:absolute;top:0;width:603px;height:1311px;overflow:hidden;border-radius:26px;background:#a5d8fb;font-family:Inter;color:var(--ink)}
+.abs{position:absolute}
+.hl{position:absolute;white-space:nowrap;line-height:1}
+.photo{position:absolute;background:#fff;padding:12px 12px 12px;border-radius:6px;box-shadow:0 18px 36px rgba(20,60,100,.22),0 3px 8px rgba(20,60,100,.12)}
+.photo i{display:block;border-radius:2px;background-size:cover;background-position:center}
+.stamp{position:absolute;font:400 25px 'Permanent Marker';color:#FFE16B;text-shadow:0 2px 3px rgba(0,0,0,.45);white-space:nowrap}
+.pill{position:absolute;display:flex;align-items:center;gap:10px;padding:10px 16px 10px 10px;border-radius:30px;background:#fff;box-shadow:0 12px 26px rgba(20,60,100,.18);font:600 16px Inter;color:var(--ink);white-space:nowrap}
+.pill .ic{width:34px;height:34px;border-radius:17px;display:grid;place-items:center;flex:none}
+.pill small{font:500 14px Inter;color:#6b7a80;margin-left:2px}
+.bub{position:absolute;border-radius:50%;background-size:cover;background-position:center;box-shadow:0 0 0 4px #fff,0 10px 22px rgba(10,50,60,.3)}
+/* redrawn Roam screens, 393 × 855 pt */
+.scr{position:absolute;left:0;top:0;width:393px;height:855px;background:#F5F7F6;overflow:hidden;font-family:Inter;color:#10201F}
+.sb{position:absolute;left:0;right:0;top:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:6px 32px 0 44px;font:600 17px Inter;z-index:5}
+.di{position:absolute;left:134px;top:11px;width:125px;height:37px;border-radius:20px;background:#000;z-index:6}
+.tab{position:absolute;left:0;right:0;bottom:0;height:86px;background:rgba(255,255,255,.94);border-top:1px solid #e8edeb;display:flex;justify-content:space-around;padding-top:10px;z-index:5}
+.ti{width:70px;display:flex;flex-direction:column;align-items:center;gap:3px;color:#9aa6a4;font:600 10.5px Inter}.ti.on{color:#0E8C8C}
+.hb{position:absolute;left:130px;bottom:8px;width:134px;height:5px;border-radius:3px;background:#10201F;z-index:6}
+.lbl{font:500 13px Inter;color:#7d8a88}
+</style></head><body>
+<header><h1>Roam · Sky Collage Panorama (style 02) · live 3D globe</h1><p>One continuous sky behind all three screenshots; the giant word, the flight route and the photo cards cross the seams.</p></header>
+<div id="wrap"><div id="stage">
+ <div class="panel" id="P1" style="left:0"></div><div class="panel" id="P2" style="left:623px"></div><div class="panel" id="P3" style="left:1246px"></div>
+</div></div>
+<script type="importmap">{"imports":{"three":"./lib/build/three.module.js"}}</script>
+<script src="parts.js"></script>
+<script>
+const $=id=>document.getElementById(id), ctx=document.createElement('canvas').getContext('2d');
+const PX=[0,623,1246], P=()=>[$('P1'),$('P2'),$('P3')];
+// add html at a STAGE position to every panel (each panel clips its own part)
+function S(html,x,y,css=''){P().forEach((p,i)=>p.insertAdjacentHTML('beforeend',`<div class="abs" style="left:${x-PX[i]}px;top:${y}px;${css}">${html}</div>`));}
+const add=(i,h)=>P()[i].insertAdjacentHTML('beforeend',h);
+function meas(t,wt,fam,ls=0){ctx.font=`${wt} 100px "${fam}"`;ctx.letterSpacing=(ls*100)+'px';const m=ctx.measureText(t),H=ctx.measureText('H'),x=ctx.measureText('x');ctx.letterSpacing='0px';
+  return{l:m.actualBoundingBoxLeft,w:m.actualBoundingBoxLeft+m.actualBoundingBoxRight,fa:m.fontBoundingBoxAscent,fd:m.fontBoundingBoxDescent,cap:H.actualBoundingBoxAscent,xh:x.actualBoundingBoxAscent,adv:m.width}}
+// text by ink-left x and BASELINE y, in stage coords (crosses seams)
+function TB(t,wt,fam,fs,x,base,color,ls=0,css=''){const m=meas(t,wt,fam,ls),k=fs/100;
+  S(`<div class="hl" style="position:static;font-family:'${fam}';font-weight:${wt};font-size:${fs}px;letter-spacing:${ls}em;line-height:${(m.fa+m.fd)*k}px;color:${color};${css}">${t}</div>`,x+m.l*k,base-m.fa*k);return m.w*k;}
+
+// lowercase headline: light line + bold line, ellipse/underline accents
+const HFS=74, LS=-.035;
+function head(pi,x,y,light,bold,mark,markType,sub){
+  const X=PX[pi]+x, xh=meas('x','800','Bricolage Grotesque').xh*HFS/100, asc=meas('l','800','Bricolage Grotesque').cap*HFS/100;
+  const b1=y+asc, b2=b1+HFS*0.98;
+  TB(light,'300','Bricolage Grotesque',HFS,X,b1,'#111318',LS);
+  TB(bold,'800','Bricolage Grotesque',HFS,X,b2,'#111318',LS);
+  // locate the marked word in the bold line
+  ctx.font=`800 ${HFS}px "Bricolage Grotesque"`;ctx.letterSpacing=(LS*HFS)+'px';
+  const i=bold.indexOf(mark), mx=X+(i?ctx.measureText(bold.slice(0,i)).width:0), mw=ctx.measureText(mark).width;ctx.letterSpacing='0px';
+  if(markType=='ellipse')
+    S(`<svg width="${mw+56}" height="${xh*1.0+62}" viewBox="0 0 ${mw+56} ${xh+62}"><path d="M${mw*.62} 8 C ${mw+52} 2, ${mw+60} ${xh+52}, ${mw*.5} ${xh+56} C -6 ${xh+58}, -2 6, ${mw*.72} 12" fill="none" stroke="#0E8C8C" stroke-width="4" stroke-linecap="round"/></svg>`,mx-28,b2-xh-30,'z-index:3;transform:rotate(-3deg)');
+  else
+    // Roam's own mark: a dashed teal flight path under the word, ending in a small paper plane
+    S(`<svg width="${mw+44}" height="34" viewBox="0 0 ${mw+44} 34"><path d="M4 22 C ${mw*.3} 12, ${mw*.65} 12, ${mw+6} 17" fill="none" stroke="#0E8C8C" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 11"/><g transform="translate(${mw+22} 16) rotate(-6)"><path d="M-13 -9 L15 0 L-13 9 L-7 0Z" fill="#0E8C8C"/><path d="M-7 0 L15 0 L-13 9Z" fill="#0A6C72"/></g></svg>`,mx-6,b2+8,'z-index:1');
+  S(`<div style="font:500 21px/1.4 Inter;color:#24343c;white-space:nowrap">${sub}</div>`,X,b2+48);
+}
+function phone(w,inner){const pad=7,sw=w-2*pad,k=sw/393,sh=855*k,r=58;
+  return `<div style="position:relative;width:${w}px;height:${sh+2*pad}px;border-radius:${r}px;background:#fdfefe;box-shadow:0 0 0 1px rgba(255,255,255,.9),0 0 0 2px rgba(20,60,100,.08),0 40px 80px rgba(20,60,100,.28)"><div style="position:absolute;left:${pad}px;top:${pad}px;width:${sw}px;height:${sh}px;border-radius:${r-pad}px;overflow:hidden"><div style="transform:scale(${k});transform-origin:0 0">${inner}</div></div></div>`;}
+
+Promise.all(['300 50px "Bricolage Grotesque"','800 50px "Bricolage Grotesque"','500 50px Inter','600 50px Inter','400 30px "Permanent Marker"','700 50px Urbanist','600 50px Urbanist'].map(f=>document.fonts.load(f))).then(()=>document.fonts.ready).then(build);
+
+function build(){
+  /* the one sky, in stage coordinates */
+  S(`<img src="img/sky.jpg" style="display:block;height:1400px;width:auto">`,-560,-60);
+  // haze toward the bottom so photo cards and the phone sit in light
+  S('',0,880,'width:1849px;height:431px;background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.35))');
+
+  /* ---------- the flight route: one dashed line through all three panels ---------- */
+  S(`<svg width="1849" height="1311" viewBox="0 0 1849 1311"><path d="M 300 1060 C 420 820, 560 760, 720 690 S 980 560, 1150 530" fill="none" stroke="#fff" stroke-width="5" stroke-dasharray="2 14" stroke-linecap="round" opacity=".95"/></svg>`,0,0,'z-index:2');
+
+  /* ---------- giant word split across panels 1 → 2 ---------- */
+  const GW='roam', GFS=430;
+  TB(GW,'800','Bricolage Grotesque',GFS,38,900,'#ffffff',-.06,'text-shadow:0 18px 50px rgba(30,90,150,.25);z-index:1');
+
+  /* ---------- panel 1 ---------- */
+  add(0,`<div class="abs" style="left:44px;top:52px;display:flex;align-items:center;gap:10px;font:700 21px Urbanist;color:#111318;z-index:4"><img src="img/roam-icon.svg" style="width:44px;height:44px;border-radius:10px;box-shadow:0 6px 16px rgba(7,90,99,.35)">Roam</div>`);
+  head(0,44,128,'every trip,','one place','one','ellipse','Flights, stays and plans together.');
+  // live 3D globe (globe.js), cropped by the bottom edge; photo bubbles ride on their cities
+  const GX=-150, GY=842, GS=904;
+  add(0,`<div class="abs" id="gwrap" style="left:${GX}px;top:${GY}px;width:${GS}px;height:${GS}px;z-index:3">
+     <canvas id="globe" width="${GS*2}" height="${GS*2}" style="width:${GS}px;height:${GS}px"></canvas></div>`);
+  const W=$('gwrap'), mk=(id,html)=>{W.insertAdjacentHTML('beforeend',`<div id="${id}" style="position:absolute;transform:translate(-50%,-100%);transition:opacity .4s;pointer-events:none">${html}</div>`);return $(id);};
+  const bub=(n,s,c)=>`<div style="display:flex;flex-direction:column;align-items:center"><div class="bub" style="position:relative;width:${s}px;height:${s}px;background-image:url(img/${n}.jpg);box-shadow:0 0 0 4px #fff,0 0 0 8px ${c},0 12px 24px rgba(10,50,60,.35)"></div><div style="width:2px;height:22px;background:#fff;opacity:.9"></div></div>`;
+  const stem=h=>`<div style="width:2px;height:${h}px;background:linear-gradient(#fff,rgba(255,255,255,.6))"></div>`;
+  const bubble=(n,s,c)=>`<div class="bub" style="position:relative;width:${s}px;height:${s}px;background-image:url(img/${n}.jpg);box-shadow:0 0 0 4px #fff,0 0 0 8px ${c},0 12px 24px rgba(10,50,60,.35)"></div>`;
+  const col=h=>`<div style="display:flex;flex-direction:column;align-items:center;gap:0">${h}</div>`;
+  window.__anchors={
+    mrs:mk('a_mrs',col(`<div class="pill" style="position:relative;margin-bottom:12px;transform:rotate(-2deg)"><span class="ic" style="background:#E6F4F3;color:#0E8C8C">${I(IC.pin,18,2.2)}</span>Cassis<small>· 3 places</small></div>`+bubble('b_boat',80,'#F5C451')+stem(74))),
+    lis:mk('a_lis',col(bubble('b_cliff',58,'#0E8C8C')+stem(26))),
+    jtr:mk('a_jtr',col(bubble('b_flowers',58,'#E2574C')+stem(40)))};
+  /* ---------- panel 2 ---------- */
+  head(1,40,128,'your itinerary,','day by day','day','underline','Every booking, sorted for you.');
+  // airplane flying across the seam into panel 3
+  S(`<img src="img/airplane_3d.png" style="width:210px;transform:rotate(-12deg);filter:drop-shadow(0 22px 22px rgba(20,60,100,.3))">`,1080,436,'z-index:6');
+  // tilted photo cards with marker date stamps + the itinerary pinned on them
+  const card=(img,x,y,w,h,rot,stamp,z)=>S(`<div class="photo" style="position:relative;transform:rotate(${rot}deg)"><i style="width:${w}px;height:${h}px;background-image:url(img/${img}.jpg)"></i><span class="stamp" style="left:26px;bottom:22px;transform:rotate(-5deg)">${stamp}</span></div>`,x,y,`z-index:${z}`);
+  card('p_cliffs',662,900,300,218,-7,'JUN 12',4);
+  card('p_cove',902,958,276,232,6,'JUN 13',5);
+  const it=(x,y,ic,bg,c,t,s,rot,z=7)=>S(`<div class="pill" style="position:relative;transform:rotate(${rot}deg)"><span class="ic" style="background:${bg};color:${c}">${I(IC[ic],18,2.2)}</span>${t}<small>${s}</small></div>`,x,y,`z-index:${z}`);
+  it(650,1138,'plane','#E6F4F3','#0E8C8C','08:40','Flight to Marseille',-3);
+  it(860,1218,'bed','#EEF0FF','#5B5BD6','15:00','Villa Calanque',2);
+  it(712,868,'boat','#FFF3D6','#B7791F','Fri','Sunset boat tour',4);
+
+  /* ---------- panel 3 ---------- */
+  head(2,40,128,'explore like','a local','local','underline','Saved spots on one map.');
+  add(2,`<img class="abs" src="img/world_map_3d.png" style="left:452px;top:44px;width:118px;transform:rotate(10deg);filter:drop-shadow(0 12px 16px rgba(20,60,100,.25));z-index:5">`);
+  add(2,`<div class="abs" style="left:96px;top:478px;z-index:3">${phone(412,sMap())}</div>`);
+  // pulled-out UI spilling past the phone edges
+  add(2,`<div class="abs" style="left:78px;top:${478+7+60*1.03}px;width:448px;height:58px;border-radius:18px;background:#fff;box-shadow:0 14px 30px rgba(20,60,100,.2);display:flex;align-items:center;gap:12px;padding:0 18px;font:500 18px Inter;color:#8a9694;z-index:6">${I(IC.search,21,2.4,'#8a9694')}Search saved spots</div>`);
+  add(2,`<div class="abs" style="left:34px;top:930px;width:535px;padding:14px;border-radius:26px;background:#fff;box-shadow:0 30px 60px rgba(20,60,100,.26);display:flex;gap:16px;align-items:center;z-index:7">
+    <div style="width:170px;height:136px;border-radius:18px;background:url(img/p_cafe.jpg) 40% 50%/cover;flex:none"></div>
+    <div style="flex:1"><span style="padding:5px 10px;border-radius:10px;background:#E6F4F3;color:#0E8C8C;font:600 13px Inter">Local favourite</span>
+      <div style="font:700 27px Urbanist;letter-spacing:-.02em;margin-top:9px">Café Bleu</div>
+      <div class="lbl" style="font-size:15px">Coffee & pastries · 4 min walk</div>
+      <div style="display:flex;gap:8px;margin-top:11px"><span style="padding:9px 14px;border-radius:12px;background:#111318;color:#fff;font:600 14px Inter">Directions</span><span style="padding:9px 14px;border-radius:12px;background:#F1F4F3;font:600 14px Inter">Add to day</span></div></div></div>`);
+  add(2,`<div class="pill" style="left:388px;top:808px;z-index:7;transform:rotate(5deg)"><span class="ic" style="background:#FDECEC;color:#D9534F">${I(IC.heart,18,2.2)}</span>12 saved</div>`);
+}
+function fit(){const w=$('wrap').clientWidth-32,s=$('stage'),k=Math.min(1,w/1849);s.style.transform=`scale(${k})`;$('wrap').style.height=(1311*k+32)+'px'}
+addEventListener('resize',fit);addEventListener('load',fit);
+</script>
+<script type="module">
+import {mountGlobe} from './globe.js';
+const go=()=>window.__anchors?mountGlobe(document.getElementById('globe'),window.__anchors):setTimeout(go,50); go();
+</script></body></html>

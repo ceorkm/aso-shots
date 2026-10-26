@@ -1,0 +1,163 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mise Scrapbook Screenshots</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=Gochi+Hand&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ecebe8;--fg:#141414;--mut:#666;--paper:#fbf8f2;--red:#E8442E;--ink:#1A1714}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#151515;--fg:#eee;--mut:#9a9a9a}}
+:root[data-theme="dark"]{--bg:#151515;--fg:#eee;--mut:#9a9a9a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 Inter,system-ui,sans-serif}
+header{max-width:1960px;margin:0 auto;padding:28px 16px 6px}
+h1{font:600 21px/1.2 Inter;margin:0 0 6px}
+header p{margin:0;color:var(--mut)}
+#wrap{overflow:hidden;max-width:1960px;margin:0 auto;padding:16px}
+#stage{position:relative;width:1845px;height:1311px;transform-origin:0 0}
+.panel{position:absolute;top:0;width:603px;height:1311px;overflow:hidden;border-radius:26px;font-family:Inter;color:var(--ink)}
+.paper{background-color:var(--paper)}
+.abs{position:absolute}
+.hl{position:absolute;white-space:nowrap;line-height:1;font-family:Archivo;font-weight:800;letter-spacing:-.01em}
+.hand{font-family:'Gochi Hand',cursive}
+/* polaroid */
+.pol{position:absolute;background:#fff;padding:14px 14px 0;box-shadow:0 6px 14px rgba(0,0,0,.18),0 1px 2px rgba(0,0,0,.08)}
+.pol img{display:block;width:100%;aspect-ratio:1;object-fit:cover}
+.pol .cap{height:var(--b);display:flex;flex-direction:column;justify-content:center;align-items:center}
+.pin{position:absolute;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#666 0,#1a1a1a 45%,#000 100%);box-shadow:2px 5px 6px rgba(0,0,0,.35);z-index:5}
+/* scalloped top edge */
+.scal{-webkit-mask:radial-gradient(circle at 50% 7px,#000 6.5px,transparent 7px) 0 0/14px 14px repeat-x,linear-gradient(#000,#000) 0 7px/100% 100% no-repeat;mask:radial-gradient(circle at 50% 7px,#000 6.5px,transparent 7px) 0 0/14px 14px repeat-x,linear-gradient(#000,#000) 0 7px/100% 100% no-repeat}
+/* soft frame */
+.soft{position:absolute;background:#fff;box-shadow:0 0 0 1px rgba(60,40,20,.08),0 40px 80px rgba(40,25,10,.28),0 8px 20px rgba(40,25,10,.12)}
+.soft .sw{position:absolute;overflow:hidden}
+/* ---- redrawn app screens, 393 × 855 ---- */
+.scr{position:absolute;left:0;top:0;width:393px;height:855px;background:#FBF7F0;overflow:hidden;font-family:Inter;color:#1A1714}
+.scr .sb{position:absolute;left:0;right:0;top:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:6px 32px 0 44px;font:600 17px Inter}
+.scr .di{position:absolute;left:134px;top:11px;width:125px;height:37px;border-radius:20px;background:#000}
+.scr .h{position:absolute;left:20px;right:20px;top:64px;display:flex;justify-content:space-between;align-items:flex-end}
+.scr .h small{display:block;font:500 14px Inter;color:#9a9087}.scr .h b{font:800 28px 'Plus Jakarta Sans';letter-spacing:-.03em}
+.scr .ib{width:40px;height:40px;border-radius:20px;background:#fff;display:grid;place-items:center;box-shadow:0 2px 8px rgba(90,60,30,.08)}
+.scr .tab{position:absolute;left:0;right:0;bottom:0;height:86px;background:rgba(255,255,255,.94);border-top:1px solid #efe8dd;display:flex;justify-content:space-around;padding-top:10px}
+.scr .ti{width:64px;display:flex;flex-direction:column;align-items:center;gap:3px;color:#b5aca2;font:600 10.5px Inter}.scr .ti.on{color:#E8442E}
+.scr .hb{position:absolute;left:130px;bottom:8px;width:134px;height:5px;border-radius:3px;background:#1A1714}
+.ck{width:24px;height:24px;border-radius:8px;border:2px solid #d9d0c5;flex:none;display:grid;place-items:center}
+.ck.on{background:#E8442E;border-color:#E8442E}
+.lab{position:absolute;top:-34px;font:600 18px Inter;color:var(--fg)}.lab span{font-weight:400;font-size:14px;color:var(--mut);margin-left:8px}
+</style></head><body>
+<header><h1>Mise · App Store screenshots 1–3 · Scrapbook collage</h1><p>Paper and photo panels alternate; pinned polaroids with handwritten captions, scalloped recipe cards, tape and doodles that cross the panel seams. App UI redrawn; photos generated with Nano Banana 2.1; data fictional.</p></header>
+<div id="wrap"><div id="stage" style="margin-top:40px">
+ <div class="lab" style="left:0">1<span>Hook · paper</span></div><div class="lab" style="left:621px">2<span>Meal plan · photo</span></div><div class="lab" style="left:1242px">3<span>Groceries · paper</span></div>
+ <div class="panel paper" id="P1" style="left:0"></div>
+ <div class="panel" id="P2" style="left:621px;background:#2a1a10"></div>
+ <div class="panel paper" id="P3" style="left:1242px"></div>
+</div></div>
+<script>
+const $=id=>document.getElementById(id), ctx=document.createElement('canvas').getContext('2d');
+const add=(p,h)=>p.insertAdjacentHTML('beforeend',h), I=n=>`img/${n}`;
+const RED='#E8442E', INK='#1A1714', PX=[0,621,1242], PANELS=['P1','P2','P3'];
+// place html at stage coords (x,y,w): added to every panel it overlaps, so seam-crossing pieces continue
+function S(x,y,w,html,z=3){PANELS.forEach((id,i)=>{if(x+w>PX[i]-40&&x<PX[i]+603+40)add($(id),`<div class="abs" style="left:${x-PX[i]}px;top:${y}px;z-index:${z}">${html}</div>`)})}
+function meas(t,wt,fam){ctx.font=`${wt} 100px "${fam}"`;const m=ctx.measureText(t),H=ctx.measureText('H');return{l:m.actualBoundingBoxLeft,w:m.actualBoundingBoxLeft+m.actualBoundingBoxRight,fa:m.fontBoundingBoxAscent,fd:m.fontBoundingBoxDescent,cap:H.actualBoundingBoxAscent}}
+// Archivo headline line, ink-left x (or centred if x=='c'), cap top y; returns {w,cap}
+function L(p,t,fs,x,y,color,css=''){const m=meas(t,'800','Archivo'),k=fs/100,w=m.w*k,xx=x==='c'?301-w/2:x;
+  add(p,`<div class="hl" style="font-size:${fs}px;line-height:${(m.fa+m.fd)*k}px;left:${xx+m.l*k}px;top:${y+m.cap*k-m.fa*k}px;color:${color};z-index:6;${css}">${t}</div>`);return{w,cap:m.cap*k,x:xx}}
+function soft(w,inner,css=''){const pad=w*.028,sw=w-2*pad,k=sw/393,sh=855*k,r=w*.155;
+  return `<div class="soft" style="width:${w}px;height:${sh+2*pad}px;border-radius:${r}px;${css}"><div class="sw" style="left:${pad}px;top:${pad}px;width:${sw}px;height:${sh}px;border-radius:${r-pad}px"><div style="transform:scale(${k});transform-origin:0 0">${inner}</div></div></div>`;}
+const pol=(img,w,rot,cap,small,b=78)=>`<div class="pol" style="width:${w}px;transform:rotate(${rot}deg);--b:${b}px"><img src="${I(img)}"><div class="cap"><div class="hand" style="font-size:${w*.105}px;line-height:1;color:${INK}">${cap}</div><div style="font:400 ${Math.max(11,w*.04)}px Inter;color:#9a9087;margin-top:5px">${small}</div></div><div class="pin" style="left:${w/2-11}px;top:-8px"></div></div>`;
+const doodle=(w,h,d,sw=2.2,c=INK)=>`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" stroke="${c}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+// faint repeating food-doodle paper texture (~6%)
+const TEX=encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="170" height="170" fill="none" stroke="#1A1714" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".06">
+ <path d="M30 22c-8 0-12 7-12 13s5 13 12 13 12-6 12-13-4-13-12-13zm0 0c0-5 3-8 7-9"/><path d="M110 18c10 6 14 18 8 30-8-4-14-16-8-30zm0 0c4 10 6 20 8 30"/>
+ <path d="M150 90v40M144 90v14a6 6 0 0 0 12 0V90"/><path d="M40 110c0-10 18-10 18 0 0-10 18-10 18 0 0 12-18 22-18 22s-18-10-18-22z"/>
+ <path d="M95 140l6-12 6 12-12-8h12z"/><path d="M70 70c4-6 4-12 0-18M80 70c4-6 4-12 0-18"/></svg>`);
+const SB=`<div class="sb"><span>9:41</span><span style="display:flex;gap:6px;align-items:center"><svg width="18" height="12" fill="#1A1714"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="#1A1714"><path d="M8 11.5 5.6 8.9a3.4 3.4 0 0 1 4.8 0zM3.6 6.9a6.2 6.2 0 0 1 8.8 0l-1.3 1.3a4.4 4.4 0 0 0-6.2 0zM1.3 4.6a9.5 9.5 0 0 1 13.4 0l-1.3 1.3a7.6 7.6 0 0 0-10.8 0z"/></svg><svg width="27" height="13"><rect x=".5" y=".5" width="23" height="12" rx="3.5" fill="none" stroke="#1A1714" opacity=".4"/><rect x="2" y="2" width="18" height="9" rx="2" fill="#1A1714"/></svg></span></div><div class="di"></div>`;
+const ICO={home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',cal:'<path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/>',cart:'<path d="M3 4h2l2.4 11h10.2L20 7H6.2"/><circle cx="9" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/>',
+  book:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11"/>',check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',plus:'<path d="M12 5v14M5 12h14"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'};
+const ic=(n,s=22,c='currentColor',sw=2)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${ICO[n]}</svg>`;
+const tabs=on=>`<div class="tab">${[['home','Today'],['book','Recipes'],['cal','Plan'],['cart','Groceries']].map(([i,l])=>`<div class="ti${l==on?' on':''}">${ic(i,25,'currentColor',1.9)}<span>${l}</span></div>`).join('')}</div><div class="hb"></div>`;
+
+/* ---- screens ---- */
+// meal plan as a feed of scalloped recipe cards
+function screenFeed(){
+  const card=(top,img,day,title,meta)=>`<div style="position:absolute;left:16px;right:16px;top:${top}px;border-radius:20px;background:#fff;box-shadow:0 2px 10px rgba(90,60,30,.07);overflow:hidden">
+     <div class="scal" style="height:172px;margin:10px 10px 0;border-radius:0 0 12px 12px;overflow:hidden"><img src="${I(img)}" style="width:100%;height:100%;object-fit:cover"></div>
+     <div style="padding:12px 14px 14px;display:flex;align-items:center"><div><div style="font:700 11px Inter;letter-spacing:.06em;color:${RED}">${day}</div><div style="font:800 19px 'Plus Jakarta Sans';letter-spacing:-.02em;margin-top:3px">${title}</div></div>
+       <div style="margin-left:auto;display:flex;align-items:center;gap:5px;font:600 13px Inter;color:#9a9087">${ic('clock',15,'#9a9087',2.2)}${meta}</div></div></div>`;
+  return `<div class="scr">${SB}
+   <div class="h"><div><small>Oct 20 – 26</small><b>This week</b></div><div class="ib">${ic('plus',20,'#1A1714',2.2)}</div></div>
+   <div style="position:absolute;left:16px;right:16px;top:124px;display:flex;justify-content:space-between">
+     ${['M','T','W','T','F','S','S'].map((d,i)=>`<div style="width:44px;padding:8px 0;border-radius:14px;text-align:center;${i==1?'background:#1A1714;color:#fff':'background:#fff'}"><div style="font:600 11px Inter;opacity:.6">${d}</div><div style="font:700 16px Inter;margin-top:2px">${20+i}</div><div style="width:5px;height:5px;border-radius:3px;margin:5px auto 0;background:${i==6?'transparent':RED}"></div></div>`).join('')}</div>
+   ${card(214,'pol_pasta.jpg','TUESDAY · DINNER','Tomato basil spaghetti','25 min')}
+   ${card(474,'pol_poke.jpg','WEDNESDAY · DINNER','Salmon poke bowl','20 min')}
+   ${tabs('Plan')}</div>`;
+}
+const LIST=[['tomato.png','Produce',[['Cherry tomatoes','2 cups',1],['Fresh basil','1 bunch',1],['Avocados','2',0],['Cucumber','1',0],['Limes','2',0]]],
+            ['cheese_wedge.png','Dairy',[['Parmesan','50 g',1],['Eggs','6',0]]],['fish.png','Seafood',[['Salmon fillets','2',0]]],['spaghetti.png','Pantry',[['00 flour','500 g',0],['Sushi rice','1 cup',0]]]];
+function screenGrocery(){
+  let y=196, h='';
+  LIST.forEach(([e,name,items])=>{h+=`<div style="position:absolute;left:20px;top:${y}px;display:flex;align-items:center;gap:8px;font:700 15px Inter"><img src="${I(e)}" style="width:22px">${name}<span style="font-weight:500;color:#9a9087">${items.length}</span></div>`;y+=32;
+    h+=`<div style="position:absolute;left:16px;right:16px;top:${y}px;border-radius:18px;background:#fff;box-shadow:0 2px 10px rgba(90,60,30,.06);padding:0 14px">${items.map((it,i)=>`<div style="display:flex;align-items:center;gap:12px;height:46px;${i?'border-top:1px solid #f3ede4':''}"><div class="ck${it[2]?' on':''}">${it[2]?ic('check',15,'#fff',3):''}</div><span style="font:500 15px Inter;${it[2]?'color:#b5aca2;text-decoration:line-through':''}">${it[0]}</span><span style="margin-left:auto;font:500 14px Inter;color:#9a9087">${it[1]}</span></div>`).join('')}</div>`;
+    y+=items.length*46+18;});
+  return `<div class="scr">${SB}
+   <div class="h"><div><small>For 4 recipes this week</small><b>Groceries</b></div><div class="ib">${ic('plus',20,'#1A1714',2.2)}</div></div>
+   <div style="position:absolute;left:20px;right:20px;top:128px"><div style="display:flex;justify-content:space-between;font:600 13px Inter;color:#9a9087"><span>3 of 11 in the cart</span><span>27%</span></div>
+     <div style="height:8px;border-radius:4px;background:#efe8dd;margin-top:8px"><div style="width:27%;height:100%;border-radius:4px;background:${RED}"></div></div></div>
+   ${h}${tabs('Groceries')}</div>`;
+}
+
+Promise.all(['800 50px Archivo','50px "Gochi Hand"','500 20px Inter','600 20px Inter','700 20px Inter','800 20px "Plus Jakarta Sans"'].map(f=>document.fonts.load(f))).then(()=>document.fonts.ready).then(build);
+
+function build(){
+  ['P1','P3'].forEach(id=>$(id).style.backgroundImage=`url("data:image/svg+xml,${TEX}")`);
+  const FS=Math.min(96,...['Dinner,','Your week,','Shop in','one list','planned'].map(t=>100*500/meas(t,'800','Archivo').w));
+  const cap=meas('H','800','Archivo').cap*FS/100, LH=cap*1.36;
+
+  /* ---------- 1 · paper: headline + pinned polaroids ---------- */
+  const P1=$('P1');
+  L(P1,'Dinner,',FS,44,104,INK); const s1=L(P1,'sorted.',FS,44,104+LH,RED);
+  add(P1,`<div class="abs" style="left:46px;top:${104+LH+cap+34}px;font:500 26px/1.35 Inter;color:#444;z-index:6">Recipes that fit your night,<br>planned in one place.</div>`);
+  // doodles
+  add(P1,`<div class="abs" style="left:${44+s1.w+14}px;top:${104+LH-14}px;z-index:6">${doodle(64,64,'<path d="M12 46c8-18 20-30 40-34M44 6l8 6-8 7"/>',2.6,RED)}</div>`);
+  add(P1,pol('pol_pasta.jpg',318,-7,"Nonna's pasta",'25 min · one pan').replace('class="pol"','class="pol" style2').replace('style2 style="','style="left:36px;top:470px;z-index:3;'));
+  add(P1,`<div class="abs" style="left:206px;top:418px;z-index:4">${doodle(70,60,'<path d="M14 54c-8-10 8-16 0-28s8-16 2-24M34 54c-8-10 8-16 0-28s8-16 2-24M54 54c-8-10 8-16 0-28s8-16 2-24"/>',2.2)}</div>`);
+  add(P1,pol('pol_dough.jpg',290,5,'Sunday bake','fresh dough · 40 min').replace('class="pol"','class="pol" style2').replace('style2 style="','style="left:212px;top:912px;z-index:4;'));
+  add(P1,`<div class="abs" style="left:52px;top:972px;z-index:6">${doodle(80,74,'<path d="M40 66S8 46 8 26A15 15 0 0 1 40 18a15 15 0 0 1 32 8c0 20-32 40-32 40z"/>',2.4,RED)}</div>`);
+  add(P1,`<div class="abs hand" style="left:26px;top:1068px;width:170px;font-size:30px;line-height:1.05;color:${INK};transform:rotate(-7deg);z-index:6">family<br>favourite!</div>`);
+  add(P1,`<div class="abs" style="left:60px;top:1196px;z-index:6">${doodle(60,60,'<path d="M30 6l7 15 16 2-12 11 3 16-14-8-14 8 3-16L7 23l16-2z"/>',2.2)}</div>`);
+  // the poke polaroid crosses the seam into the photo panel
+  S(392,640,300,pol('pol_poke.jpg',282,10,'Tuesday poke','20 min · no cooking'),5);
+  S(470,610,40,`<div class="hand" style="font-size:28px;color:${INK};transform:rotate(-8deg);white-space:nowrap">tonight →</div>`,6);
+
+  /* ---------- 2 · photo: centred white headline, phone rising from the bottom ---------- */
+  const P2=$('P2');
+  add(P2,`<img class="abs" src="${I('kitchen.jpg')}" style="left:-64px;top:0;height:1311px;width:auto;z-index:0">`);
+  add(P2,`<div class="abs" style="left:0;right:0;top:0;height:600px;background:linear-gradient(180deg,rgba(25,14,6,.62),rgba(25,14,6,.25) 55%,rgba(25,14,6,0));z-index:1"></div>`);
+  L(P2,'Your week,',FS,'c',104,'#fff','text-shadow:0 2px 18px rgba(0,0,0,.25)'); L(P2,'planned',FS,'c',104+LH,'#fff','text-shadow:0 2px 18px rgba(0,0,0,.25)');
+  add(P2,`<div class="abs" style="left:0;right:0;top:${104+LH+cap+36}px;text-align:center;font:500 26px/1.35 Inter;color:rgba(255,255,255,.92);z-index:6">Drag recipes into any day</div>`);
+  add(P2,`<div class="abs hand" style="left:362px;top:${104+LH+cap+86}px;font-size:30px;color:#FFD9C7;transform:rotate(-5deg);z-index:6">so easy ♡</div>`);
+  add(P2,soft(430,screenFeed(),'left:86px;top:842px;z-index:4'));
+
+  // washi tape across the seam between 2 and 3, holding a handwritten note
+  S(1242+408,548,170,`<div style="width:170px;height:118px;background:#fffdf7;transform:rotate(5deg);box-shadow:0 6px 14px rgba(0,0,0,.18);padding:24px 16px 0" class="hand"><div style="font-size:27px;line-height:1.1;color:${INK}">pick up basil<br>+ parmesan</div></div>`,5);
+  S(1242+446,532,96,`<div style="width:96px;height:32px;background:rgba(232,68,46,.55);transform:rotate(-8deg)"></div>`,6);
+  S(1000,548,250,`<svg width="250" height="80" viewBox="0 0 250 80" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 12"><path d="M4 66C70 30 160 22 248 34"/></svg>`,5);
+  S(1242,560,400,`<svg width="400" height="70" viewBox="0 0 400 70" fill="none" stroke="#1A1714" stroke-width="3" stroke-linecap="round"><path d="M2 22C130 14 260 18 392 44" stroke-dasharray="2 12"/><path d="M376 30l18 14-20 8"/></svg>`,6);
+
+  /* ---------- 3 · paper: phone hanging from the top, headline below, recipe cards spilling from an envelope ---------- */
+  const P3=$('P3');
+  add(P3,soft(420,screenGrocery(),'left:92px;top:-370px;z-index:3'));
+  const y3=640;
+  L(P3,'Shop in',FS,44,y3,INK); const s3=L(P3,'one list',FS,44,y3+LH,INK);
+  add(P3,`<div class="abs" style="left:38px;top:${y3+LH+cap+4}px;z-index:5">${doodle(s3.w+20,26,`<path d="M4 16c${s3.w*.3} -10 ${s3.w*.7} -10 ${s3.w+12} -4"/>`,7,RED)}</div>`);
+  add(P3,`<div class="abs" style="left:46px;top:${y3+LH+cap+48}px;font:500 26px/1.35 Inter;color:#444;z-index:6">Every ingredient,<br>sorted by aisle.</div>`);
+  // envelope: back, cards, front pocket
+  const EX=60,EY=1086,EW=483;
+  add(P3,`<div class="abs" style="left:${EX}px;top:${EY}px;width:${EW}px;height:300px;background:linear-gradient(180deg,#d6b688,#cfae7e);border-radius:6px;box-shadow:0 18px 30px rgba(80,50,20,.25);z-index:3"></div>`);
+  const card=(x,y,rot,img,name)=>add(P3,`<div class="abs" style="left:${x}px;top:${y}px;width:190px;height:236px;background:#fff;border-radius:8px;transform:rotate(${rot}deg);box-shadow:0 8px 18px rgba(0,0,0,.18);z-index:4;padding:10px">
+     <div class="scal" style="height:150px;overflow:hidden;border-radius:0 0 6px 6px"><img src="${I(img)}" style="width:100%;height:100%;object-fit:cover"></div>
+     <div class="hand" style="font-size:25px;line-height:1.05;margin-top:9px;color:${INK}">${name}</div></div>`);
+  card(70,936,-16,'t_green.jpg','Green goddess');card(180,904,-5,'pol_pasta.jpg',"Nonna's pasta");card(290,912,7,'pol_poke.jpg','Tuesday poke');card(384,950,17,'pol_dough.jpg','Sunday bake');
+  add(P3,`<div class="abs" style="left:${EX}px;top:${EY+56}px;width:${EW}px;height:260px;z-index:5;background:linear-gradient(180deg,#e2c497,#d8b887);clip-path:polygon(0 0,50% 34%,100% 0,100% 100%,0 100%);filter:drop-shadow(0 -2px 3px rgba(80,50,20,.2))"></div>`);
+  add(P3,`<div class="abs hand" style="left:${EX+EW/2-90}px;top:${EY+112}px;width:260px;margin-left:-40px;text-align:center;font-size:31px;color:#5b3d1c;z-index:6;transform:rotate(-3deg)">this week's recipes</div>`);
+}
+function fit(){const w=$('wrap').clientWidth-32,s=$('stage'),k=Math.min(1,w/1845);s.style.transform=`scale(${k})`;$('wrap').style.height=(1311*k+72)+'px'}
+addEventListener('resize',fit);addEventListener('load',fit);
+</script></body></html>
