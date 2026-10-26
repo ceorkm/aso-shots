@@ -1,0 +1,18 @@
+{
+ "trackName": "SubPal:Subscription tracker",
+ "sellerName": "rkm labs ltd",
+ "primaryGenreName": "Productivity",
+ "genres": [
+  "Productivity",
+  "Finance"
+ ],
+ "averageUserRating": 5,
+ "userRatingCount": 1,
+ "description": "MANAGE ALL YOUR SUBSCRIPTIONS:\nSubPal is the ultimate subscription manager for tracking monthly subscriptions, annual memberships, and recurring payments. Whether you're managing streaming services, software subscriptions, gym memberships, or cloud storage, track everything in one subscription tracker app\n\nNEVER MISS A RENEWAL:\nSet custom renewal reminders for each subscription. Get notified days before your payment is due so you can review, cancel, or keep your subscriptions. Smart alerts help you avoid unwanted charges and forgotten subscriptions that drain your budget.\n\nCOMPREHENSIVE SUBSCRIPTION TRACKING:\nTrack unlimited recurring payments with SubPal Pro\nManage monthly, yearly, and custom billing cycles\nMonitor subscription costs in real time\nCancel subscriptions you no longer need\nExport subscription reports for budgeting\n\nPERFECT FOR:\nStreaming subscription management\nSoftware and app subscriptions\nGym and fitness memberships\nNews and magazine subscriptions\nCloud storage and productivity tools\nAny recurring payment or monthly subscription\n\nTAKE CONTROL OF YOUR RECURRING EXPENSES:\nSubPal's subscription manager helps you identify which subscriptions are worth keeping and which ones are draining your wallet. Our subscription tracker gives you complete visibility into your recurring payments so you can make informed decisions about your monthly expenses.\n\nDownload SubPal, the best subscription tracker and manager for iOS.\nTerms of Use: https://subpal.app/terms",
+ "releaseNotes": "Bug Fixes\n\n  - Fixed notification timing issues\n  - Improved language support across the app\n  - Fixed subscription stats accuracy\n  - Minor stability improvements",
+ "version": "1.0.3",
+ "price": 0.0,
+ "formattedPrice": "Free",
+ "trackViewUrl": "https://apps.apple.com/us/app/subpal-subscription-tracker/id6752530882?uo=4",
+ "contentAdvisoryRating": "4+"
+}
