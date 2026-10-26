@@ -96,3 +96,7 @@ subpal/                        A full before and after: SubPal's old App Store s
 | `scripts/gen_image.py` | Generates one image asset with OpenAI GPT Image or Google Nano Banana |
 | `scripts/chroma_key.py` | Turns a green-screen image into a transparent PNG |
 | `scripts/fetch_listing.py` | Downloads an App Store listing's screenshots and details |
+
+## License
+
+MIT. See [LICENSE](LICENSE).
