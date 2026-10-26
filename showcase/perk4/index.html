@@ -1,0 +1,87 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Perk Screenshots</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e6e6e6;--fg:#111;--lime:#C6F432}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101010;--fg:#eee}}
+:root[data-theme="dark"]{--bg:#101010;--fg:#eee}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 'Plus Jakarta Sans',system-ui,sans-serif}
+#stage{display:flex;gap:40px;padding:40px;width:max-content}
+.panel{position:relative;width:603px;height:1311px;overflow:hidden;border-radius:26px;flex:none;font-family:'Plus Jakarta Sans';color:#ececec}
+.abs{position:absolute}
+.hl{position:absolute;white-space:nowrap;line-height:1;font-family:Fredoka;font-weight:600;color:#ececec;transform-origin:0 50%}
+.pill{position:absolute;display:flex;align-items:center;gap:8px;white-space:nowrap;border-radius:40px;font:800 18px 'Plus Jakarta Sans';letter-spacing:-.01em}
+.doodle{position:absolute;stroke:#5c5c5c;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+</style></head><body>
+<div id="stage"><div class="panel" id="P1"></div><div class="panel" id="P2"></div><div class="panel" id="P3"></div></div>
+<script>
+const $=id=>document.getElementById(id), add=(p,h)=>p.insertAdjacentHTML('beforeend',h);
+const ctx=document.createElement('canvas').getContext('2d');
+// bubbly headline line: Fredoka 600 caps, narrowed to .92, round-joined same-colour stroke, slight tilt; ink width w, cap top y
+function B(p,t,x,y,w,rot,color='#ececec'){
+  ctx.font='600 100px Fredoka'; const m=ctx.measureText(t), H=ctx.measureText('H');
+  const fs=100*w/(m.width*.92), cap=H.actualBoundingBoxAscent*fs/100, fa=m.fontBoundingBoxAscent*fs/100;
+  add(p,`<div class="hl" style="left:${x}px;top:${y+cap-fa}px;font-size:${fs}px;color:${color};-webkit-text-stroke:${fs*.06}px ${color};paint-order:stroke;stroke-linejoin:round;transform:scaleX(.92) rotate(${rot}deg)">${t}</div>`);
+  return cap;
+}
+const sparkle=(x,y,s=26,c='#5c5c5c')=>`<svg class="doodle" style="left:${x}px;top:${y}px;stroke:${c}" width="${s}" height="${s}" viewBox="0 0 26 26"><path d="M13 2v22M2 13h22M5.5 5.5l15 15M20.5 5.5l-15 15" stroke-width="2.6"/></svg>`;
+let POS;
+const fonts=['600 50px Fredoka','700 50px Fredoka','500 20px "Plus Jakarta Sans"','700 20px "Plus Jakarta Sans"','800 20px "Plus Jakarta Sans"'];
+Promise.all(fonts.map(f=>document.fonts.load(f))).then(()=>document.fonts.ready).then(()=>fetch('img/pos.json')).then(r=>r.json()).then(p=>{POS=p;build()});
+
+function build(){
+  /* ===== P1 · mesh · get paid to shop ===== */
+  const P1=$('P1');
+  P1.style.background='radial-gradient(60% 45% at 18% 12%,#5a2550 0%,rgba(90,37,80,0) 70%),radial-gradient(70% 50% at 90% 40%,#d9605b 0%,rgba(217,96,91,0) 70%),radial-gradient(80% 55% at 30% 95%,#f5b184 0%,rgba(245,177,132,0) 72%),linear-gradient(170deg,#4a1f43,#a7465a 55%,#e88a6c)';
+  let y=86; y+=B(P1,'GET PAID',40,y,450,-2)+48; B(P1,'TO SHOP',54,y,410,1.5);
+  add(P1,`<img class="abs" src="img/bag.png" style="left:-36px;top:338px;width:650px;filter:drop-shadow(0 30px 40px rgba(60,10,30,.35))">`);
+  add(P1,`<div class="pill" style="left:396px;top:392px;padding:12px 20px;background:var(--lime);color:#16161a;transform:rotate(-7deg);box-shadow:0 12px 24px rgba(60,10,30,.3)">12% BACK</div>`);
+  add(P1,sparkle(540,340,24,'#ffd9c9')+sparkle(80,560,18,'#ffd9c9')+sparkle(470,980,20,'#ffd9c9'));
+  // the app's cashback notification
+  add(P1,`<div class="abs" style="left:34px;right:34px;top:1078px;padding:18px 20px;border-radius:26px;background:rgba(22,22,26,.86);backdrop-filter:blur(14px);box-shadow:0 24px 50px rgba(40,5,20,.4);transform:rotate(-2deg);display:flex;align-items:center;gap:14px">
+     <div style="width:52px;height:52px;border-radius:14px;background:var(--lime);display:grid;place-items:center;font:700 30px Fredoka;color:#16161a">P</div>
+     <div style="flex:1"><div style="display:flex;justify-content:space-between;font:600 13px 'Plus Jakarta Sans';color:#9a9a9e"><span>PERK</span><span>now</span></div>
+       <div style="font:800 21px 'Plus Jakarta Sans';letter-spacing:-.02em;margin-top:2px"><span style="color:var(--lime)">+$4.80</span> cashback landed</div>
+       <div style="font:500 14px 'Plus Jakarta Sans';color:#b9b9bd">Kettle&amp;Co · 12% back on $40.00</div></div></div>`);
+
+  /* ===== P2 · dark · watch it stack up ===== */
+  const P2=$('P2'); P2.style.background='#141414';
+  y=86; y+=B(P2,'WATCH IT',44,y,420,-1.5)+48; B(P2,'STACK UP',40,y,450,2);
+  add(P2,`<div class="abs" style="left:34px;right:34px;top:372px;padding:24px 26px;border-radius:28px;background:#1d1d1f;box-shadow:inset 0 0 0 1px #2a2a2d">
+     <div style="display:flex;justify-content:space-between;align-items:center;font:600 15px 'Plus Jakarta Sans';color:#9a9a9e"><span>Your cashback</span><span style="padding:6px 12px;border-radius:14px;background:#26262a;color:#ececec">Cash out</span></div>
+     <div style="font:700 74px/1 Fredoka;letter-spacing:-.01em;margin:12px 0 10px">$86.40</div>
+     <div style="display:flex;gap:10px;align-items:center;font:700 15px 'Plus Jakarta Sans'"><span style="padding:6px 12px;border-radius:14px;background:var(--lime);color:#16161a">+$12.30 this week</span><span style="color:#9a9a9e;font-weight:500">best week yet</span></div></div>`);
+  const sk=640/1400, sy=604, S=POS.stacks, amt=['$6.10','$8.40','$7.20','$10.80','$12.30'], wk=['Feb 3','Feb 10','Feb 17','Feb 24','This week'];
+  add(P2,`<img class="abs" src="img/stacks.png" style="left:-18px;top:${sy}px;width:640px">`);
+  for(let i=0;i<5;i++){const [tx,ty]=S['s'+i], [bx,by]=S['b'+i], last=i==4;
+    add(P2,`<div class="abs" style="left:${tx*sk-18}px;top:${sy+ty*sk-44}px;transform:translateX(-50%);font:800 ${last?19:16}px 'Plus Jakarta Sans';white-space:nowrap;${last?'padding:6px 12px;border-radius:14px;background:var(--lime);color:#16161a':'color:#ececec'}">${amt[i]}</div>`);
+    add(P2,`<div class="abs" style="left:${bx*sk-18}px;top:${sy+by*sk+14}px;transform:translateX(-50%);font:600 13px 'Plus Jakarta Sans';color:${last?'#ececec':'#7c7c80'};white-space:nowrap">${wk[i]}</div>`);}
+  add(P2,sparkle(520,290,22)+sparkle(46,1180,26)+`<svg class="doodle" style="left:470px;top:1110px" width="90" height="70" viewBox="0 0 90 70"><path d="M5 60 C 30 50, 50 30, 70 10 M70 10 l-14 2 M70 10 l-2 14"/></svg>`);
+  add(P2,`<div class="abs" style="left:0;right:0;top:1056px;text-align:center;font:500 15px 'Plus Jakarta Sans';color:#7c7c80">Every purchase at 40+ partner stores adds up</div>`);
+
+  /* ===== P3 · dark · cash out anytime ===== */
+  const P3=$('P3'); P3.style.background='#141414';
+  y=86; y+=B(P3,'CASH OUT',40,y,430,1.5)+48; B(P3,'ANYTIME',54,y,390,-2);
+  // frameless phone outline with the redrawn cash-out screen
+  add(P3,`<div class="abs" style="left:86px;top:404px;width:431px;height:980px;border-radius:58px;border:2px solid #2b2b2b;background:#1a1a1a;overflow:hidden;padding:20px 24px">
+     <div style="display:flex;justify-content:space-between;font:700 14px 'Plus Jakarta Sans';color:#ececec;padding:0 8px"><span>9:41</span><span style="width:104px;height:30px;border-radius:15px;background:#000;margin-top:-4px"></span><span>●●●</span></div>
+     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:26px;font:600 15px 'Plus Jakarta Sans';color:#9a9a9e"><span>‹ Back</span><span style="color:#ececec;font-weight:700">Cash out</span><span style="width:40px"></span></div>
+     <div style="text-align:center;margin-top:40px;font:600 14px 'Plus Jakarta Sans';color:#9a9a9e">Available</div>
+     <div style="text-align:center;font:700 82px/1.05 Fredoka">$86.40</div>
+     <div style="display:flex;justify-content:center;gap:10px;margin-top:20px;font:700 15px 'Plus Jakarta Sans'">${['$20','$50','All'].map((v,i)=>`<span style="padding:10px 18px;border-radius:16px;${i==2?'background:var(--lime);color:#16161a':'background:#26262a'}">${v}</span>`).join('')}</div>
+     <div style="margin-top:28px;border-radius:22px;background:#212124;padding:4px 18px">
+       ${[['To','Bank ···· 4021'],['Arrives','Instantly'],['Fee','Free']].map(([k,v],i)=>`<div style="display:flex;justify-content:space-between;padding:15px 0;${i?'border-top:1px solid #2c2c30':''};font:600 15px 'Plus Jakarta Sans'"><span style="color:#9a9a9e">${k}</span><span>${v}</span></div>`).join('')}</div>
+     <div style="margin-top:28px;height:66px;border-radius:33px;background:#26262a;display:flex;align-items:center;padding:6px;font:700 16px 'Plus Jakarta Sans';color:#9a9a9e">
+       <span style="width:54px;height:54px;border-radius:27px;background:var(--lime);display:grid;place-items:center;color:#16161a;font-size:24px">→</span><span style="flex:1;text-align:center;margin-right:54px">Slide to cash out</span></div>
+     <div style="margin-top:30px;font:700 15px 'Plus Jakarta Sans';color:#ececec">Recent</div>
+     ${[['Mar 2','$40.00'],['Feb 14','$25.00'],['Jan 30','$31.50']].map(([d,v])=>`<div style="display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid #26262a;font:600 14px 'Plus Jakarta Sans'"><span style="color:#9a9a9e">${d} · to Bank</span><span>${v}</span></div>`).join('')}</div>`);
+  // a coin flying out of the phone, with speed lines
+  add(P3,`<svg class="doodle" style="left:356px;top:330px;stroke:#3a3a3d" width="120" height="120" viewBox="0 0 120 120"><path d="M10 110 L60 60 M30 112 L70 72 M8 88 L48 48" stroke-width="4"/></svg>`);
+  add(P3,`<img class="abs" src="img/coin.png" style="left:388px;top:250px;width:210px;transform:rotate(-12deg);filter:drop-shadow(0 20px 30px rgba(0,0,0,.6))">`);
+  add(P3,`<img class="abs" src="img/coin2.png" style="left:20px;top:330px;width:110px;transform:rotate(18deg);filter:drop-shadow(0 14px 20px rgba(0,0,0,.6)) blur(.6px)">`);
+  add(P3,sparkle(520,520,22)+sparkle(40,620,18));
+  add(P3,`<div class="abs" style="left:0;right:0;bottom:0;height:150px;background:linear-gradient(180deg,rgba(20,20,20,0),#141414 80%)"></div>`);
+}
+</script></body></html>

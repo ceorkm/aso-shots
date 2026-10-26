@@ -1,0 +1,144 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tally Screenshots</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9e9eb;--fg:#111;--mut:#777}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141414;--fg:#eee;--mut:#999}}
+:root[data-theme="dark"]{--bg:#141414;--fg:#eee;--mut:#999}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 Inter,system-ui,sans-serif}
+#stage{display:flex;gap:40px;padding:40px;width:max-content;transform-origin:0 0}
+.panel{position:relative;width:603px;height:1311px;overflow:hidden;border-radius:26px;flex:none;font-family:Inter;color:#0f0f10}
+.abs{position:absolute}
+.hl{position:absolute;white-space:nowrap;line-height:1}
+.brand{position:absolute;left:40px;right:40px;top:40px;display:flex;justify-content:space-between;font:600 11.5px Inter;letter-spacing:.2em;text-transform:uppercase}
+/* stock tag (the app's scan overlay) */
+.tag{position:absolute;display:flex;align-items:center;gap:7px;padding:7px 11px 7px 9px;border-radius:12px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.05),0 8px 20px rgba(0,0,0,.10);font:500 13px Inter;color:#38383b;white-space:nowrap;transform:translate(-50%,-100%)}
+.tag b{font-weight:700;color:#0f0f10}
+.tag i{width:7px;height:7px;border-radius:4px;flex:none}
+.stem{position:absolute;width:1px;background:rgba(0,0,0,.25);transform:translateX(-.5px)}
+.stem::after{content:"";position:absolute;left:-2.5px;bottom:-3px;width:6px;height:6px;border-radius:3px;background:#0f0f10}
+/* phone screen (393 × 851) */
+.scr{position:absolute;left:0;top:0;width:393px;height:851px;background:#0c0c0d;color:#f2f2f2;font-family:Inter;transform-origin:0 0;overflow:hidden}
+.scr .sb{position:absolute;left:0;right:0;top:14px;display:flex;justify-content:space-between;padding:0 30px 0 34px;font:600 16px Inter}
+.mono{font-family:'JetBrains Mono',monospace}
+</style></head><body>
+<div id="stage">
+ <div class="panel" id="P1"></div>
+ <div class="panel" id="P2"></div>
+ <div class="panel" id="P3"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id), add=(p,h)=>p.insertAdjacentHTML('beforeend',h);
+const ctx=document.createElement('canvas').getContext('2d');
+function meas(t,font){ctx.font=font;const m=ctx.measureText(t),H=ctx.measureText('H');return{l:m.actualBoundingBoxLeft,w:m.actualBoundingBoxLeft+m.actualBoundingBoxRight,fa:m.fontBoundingBoxAscent,fd:m.fontBoundingBoxDescent,cap:H.actualBoundingBoxAscent}}
+// headline line: ink width w, cap-top at y; serif lines get a same-colour stroke to thicken them
+function L(p,t,kind,x,y,w,color,align='left'){
+  const fam=kind=='serif'?"'Instrument Serif'":'Inter', wt=kind=='serif'?400:400;
+  const m=meas(t,`${wt} 100px ${fam}`), fs=100*w/m.w, k=fs/100, ls=kind=='serif'?0:-.02;
+  const left=align=='right'?x-w:x;
+  add(p,`<div class="hl" style="font-family:${fam};font-weight:${wt};font-size:${fs}px;line-height:${(m.fa+m.fd)*k}px;left:${left+m.l*k}px;top:${y+m.cap*k-m.fa*k}px;color:${color};letter-spacing:${ls}em;${kind=='serif'?`-webkit-text-stroke:${fs*.028}px ${color}`:''}">${t}</div>`);
+  return m.cap*k;
+}
+const SHELF_K=603/1400;   // shelf render 1400×1500 shown 603 wide
+let POS;
+
+function tag(p,x,y,name,val,dot,lift=58){
+  add(p,`<div class="stem" style="left:${x}px;top:${y-lift}px;height:${lift-6}px"></div>`);
+  add(p,`<div class="tag" style="left:${x}px;top:${y-lift}px"><i style="background:${dot}"></i>${name}<b>${val}</b></div>`);
+}
+
+/* ---------- redrawn sales screen ---------- */
+function screenSales(){
+  const bars=[42,58,51,66,74,98,88], days='MTWTFSS';
+  const row=(img,n,d,v,s)=>`<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid #1d1d1f">
+     <div style="width:42px;height:42px;border-radius:11px;background:#e9e9eb;display:grid;place-items:center"><img src="img/${img}_t.png" style="max-width:30px;max-height:30px"></div>
+     <div><div style="font:600 15px Inter">${n}</div><div style="font:500 12.5px Inter;color:#8a8a8e">${d}</div></div>
+     <div style="margin-left:auto;text-align:right"><div style="font:600 15px Inter">${v}</div><div style="font:500 12px Inter;color:#9fd8b0">${s}</div></div></div>`;
+  return `<div class="scr">
+   <div class="sb"><span>9:41</span><span style="display:flex;gap:6px;align-items:center"><svg width="17" height="11"><rect y="7" width="3" height="4" rx="1" fill="#fff"/><rect x="4.7" y="5" width="3" height="6" rx="1" fill="#fff"/><rect x="9.4" y="2.5" width="3" height="8.5" rx="1" fill="#fff"/><rect x="14" width="3" height="11" rx="1" fill="#fff"/></svg><svg width="25" height="12"><rect x=".5" y=".5" width="21" height="11" rx="3" fill="none" stroke="#fff" opacity=".4"/><rect x="2" y="2" width="16" height="8" rx="1.6" fill="#fff"/></svg></span></div>
+   <div style="position:absolute;left:22px;right:22px;top:66px;display:flex;justify-content:space-between;align-items:center">
+     <div><div style="font:500 13px Inter;color:#8a8a8e">Hearth &amp; Home</div><div style="font:600 26px Inter;letter-spacing:-.02em">Sales</div></div>
+     <div style="display:flex;padding:3px;border-radius:11px;background:#1a1a1c;font:600 12.5px Inter"><span style="padding:6px 11px;border-radius:8px;background:#f2f2f2;color:#0c0c0d">Week</span><span style="padding:6px 11px;color:#8a8a8e">Month</span></div></div>
+   <div style="position:absolute;left:22px;top:150px;font:500 13px Inter;color:#8a8a8e">Mar 10 – 16</div>
+   <div style="position:absolute;left:20px;top:168px;font:400 64px/1 'Instrument Serif';letter-spacing:-.01em">$6,940</div>
+   <div style="position:absolute;left:24px;top:240px;font:600 13px Inter;color:#9fd8b0">▲ 12.4% vs last week</div>
+   <div style="position:absolute;left:22px;right:22px;top:284px;height:150px;display:flex;align-items:flex-end;gap:10px">
+     ${bars.map((h,i)=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:100%;height:${h*1.2}px;border-radius:8px;background:${i==5?'#f2f2f2':'#2a2a2d'}"></div><span style="font:600 11px Inter;color:${i==5?'#f2f2f2':'#6d6d72'}">${days[i]}</span></div>`).join('')}</div>
+   <div style="position:absolute;left:22px;right:22px;top:470px">
+     <div style="display:flex;justify-content:space-between;font:600 16px Inter;margin-bottom:6px"><span>Top sellers</span><span style="font:500 13px Inter;color:#8a8a8e">See all</span></div>
+     ${row('soap','Olive oil soap','212 sold','$1,484','▲ 18%')}${row('candle','Beeswax candle','96 sold','$1,632','▲ 9%')}${row('teapot','Stoneware teapot','31 sold','$1,209','▲ 4%')}${row('mug','Ceramic mug','58 sold','$812','▲ 2%')}</div>
+  </div>`;
+}
+
+const fonts=['400 50px Inter','500 50px Inter','600 50px Inter','700 50px Inter','400 50px "Instrument Serif"','500 20px "JetBrains Mono"'];
+Promise.all(fonts.map(f=>document.fonts.load(f))).then(()=>document.fonts.ready).then(()=>fetch('img/pos.json')).then(r=>r.json()).then(p=>{POS=p;build()});
+
+function build(){
+  /* ===== P1 · white · the shelf, counted ===== */
+  const P1=$('P1'); P1.style.background='linear-gradient(180deg,#ffffff,#f4f3f6)';
+  add(P1,`<div class="brand"><span>Tally</span><span style="color:#9d9da0">Hearth &amp; Home · Aisle 2</span></div>`);
+  let y=104; y+=L(P1,'Your whole shop,','sans',40,y,452,'#9d9da0')+22;
+  L(P1,'counted.','serif',40,y,330,'#0f0f10');
+  const sy=372;   // shelf image top
+  add(P1,`<img class="abs" src="img/shelf.png" style="left:0;top:${sy}px;width:603px">`);
+  // viewfinder corners: the app's scan mode
+  const vf=(x,y,r)=>`<svg class="abs" style="left:${x}px;top:${y}px;transform:rotate(${r}deg)" width="34" height="34"><path d="M2 32V8a6 6 0 0 1 6-6h24" fill="none" stroke="#0f0f10" stroke-width="3" stroke-linecap="round"/></svg>`;
+  add(P1,vf(16,sy-18,0)+vf(553,sy-18,90)+vf(553,sy+612,180)+vf(16,sy+612,270));
+  const S=POS.shelf, X=v=>v*SHELF_K, Y=v=>sy+v*SHELF_K;
+  tag(P1,X(S.bottle[0]),Y(S.bottle[1])-4,'Bath oil','18','#bfe6c9',60);
+  tag(P1,X(S.candle[0]),Y(S.candle[1]),'Beeswax candle','24','#bfe6c9',64);
+  tag(P1,X(S.soap[0])+8,Y(S.soap[1]),'Olive oil soap','4 left','#f6d48b',64);
+  tag(P1,X(S.teapot[0]),Y(S.teapot[1]),'Teapot','6','#bfe6c9',58);
+  tag(P1,X(S.mug[0]),Y(S.mug[1]),'Mug','31','#bfe6c9',58);
+  tag(P1,X(S.jar[0]),Y(S.jar[1]),'Honey','12','#bfe6c9',58);
+  add(P1,`<div class="abs" style="left:50%;transform:translateX(-50%);top:1062px;display:flex;align-items:center;gap:12px;padding:15px 22px 15px 16px;border-radius:20px;background:#0f0f10;color:#fff;font:500 16px Inter;white-space:nowrap;box-shadow:0 18px 36px rgba(0,0,0,.18)">
+     <span style="width:30px;height:30px;border-radius:9px;background:#fff;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f0f10" stroke-width="2.2" stroke-linecap="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/></svg></span>
+     Shelf scanned<span style="color:#9d9da0">· 6 products · 95 items</span></div>`);
+  add(P1,`<div class="abs" style="left:40px;right:40px;top:1178px;display:flex;justify-content:space-between;font:500 12px 'JetBrains Mono';color:#a2a2a6;letter-spacing:.02em"><span>162 PRODUCTS</span><span>1,284 ITEMS</span><span>UPDATED NOW</span></div>`);
+
+  /* ===== P2 · black · sales ===== */
+  const P2=$('P2'); P2.style.background='#0b0b0b';
+  add(P2,`<div class="brand" style="color:#fff"><span>Tally</span><span style="color:#6d6d72">Sales · this week</span></div>`);
+  y=104; y+=L(P2,'See exactly','sans',40,y,330,'#7d7d82')+22;
+  L(P2,'what sells.','serif',40,y,410,'#ffffff');
+  // phone: notch frame (657×1331, screen hole 36,32 585×1266) with a thin light outline
+  const pw=414, fk=pw/657, sk=585*fk/393;
+  add(P2,`<div class="abs" style="left:${(603-pw)/2}px;top:372px;width:${pw}px;height:${1331*fk}px;filter:drop-shadow(0 0 0 #3a3a3d) drop-shadow(0 0 1px #6a6a6e) drop-shadow(0 40px 60px rgba(0,0,0,.6))">
+     <div style="position:absolute;left:${36*fk}px;top:${32*fk}px;width:${585*fk}px;height:${1266*fk}px;border-radius:${70*fk}px;overflow:hidden"><div style="transform:scale(${sk});transform-origin:0 0">${screenSales()}</div></div>
+     <img src="img/notch.png" style="position:absolute;inset:0;width:100%;height:100%"></div>`);
+  // products orbit the phone, each with what it sold
+  // products sit beside the phone, in front of its edge, each with what it sold (labels kept inside the panel)
+  const orb=(img,x,y,w,lab,val,side,ly)=>{add(P2,`<img class="abs" src="img/${img}_t.png" style="left:${x}px;top:${y}px;width:${w}px;z-index:2;filter:drop-shadow(0 18px 24px rgba(0,0,0,.6))">`);
+    add(P2,`<div class="abs" style="${side=='l'?'left:26px;text-align:left':'right:26px;text-align:right'};top:${ly}px;font:500 11.5px 'JetBrains Mono';color:#8a8a8e;letter-spacing:.04em;white-space:nowrap;z-index:3">${lab}<br><span style="font:400 25px/1.1 'Instrument Serif';color:#fff;letter-spacing:0">${val}</span></div>`);};
+  orb('soap',14,600,118,'OLIVE OIL<br>SOAP','212 sold','l',496);
+  orb('candle',480,820,104,'BEESWAX<br>CANDLE','96 sold','r',710);
+  orb('mug',14,1010,98,'CERAMIC<br>MUG','58 sold','l',896);
+  add(P2,`<div class="abs" style="left:0;right:0;bottom:0;height:200px;background:linear-gradient(180deg,rgba(11,11,11,0),#0b0b0b 80%)"></div>`);
+
+  /* ===== P3 · light grey · the gap, restocked ===== */
+  const P3=$('P3'); P3.style.background='linear-gradient(180deg,#f1f1f3,#e4e4e7)';
+  add(P3,`<div class="brand"><span>Tally</span><span style="color:#9d9da0">Reorders</span></div>`);
+  y=104; y+=L(P3,'Restock','sans',40,y,226,'#9d9da0')+22;
+  L(P3,'before it’s gone.','serif',40,y,523,'#0f0f10');
+  add(P3,`<img class="abs" src="img/gap.png" style="left:0;top:${sy}px;width:603px">`);
+  const G=POS.gap, gx=X(G.soap[0]), gy=Y(G.soap[1]);
+  add(P3,`<div class="abs" style="left:${gx-88}px;top:${gy-6}px;width:176px;height:96px;border:2px dashed #b4b4b8;border-radius:14px"></div>`);
+  tag(P3,gx,gy-4,'Olive oil soap','0 left','#f2a7a0',44);
+  // the reorder sheet (app UI), rising from the bottom
+  add(P3,`<div class="abs" style="left:24px;right:24px;top:902px;bottom:-30px;border-radius:30px;background:#fff;box-shadow:0 -1px 0 rgba(0,0,0,.04),0 -24px 60px rgba(0,0,0,.14);padding:14px 24px">
+     <div style="width:40px;height:5px;border-radius:3px;background:#e2e2e5;margin:0 auto 18px"></div>
+     <div style="display:flex;align-items:center;gap:14px">
+       <div style="width:64px;height:64px;border-radius:16px;background:#f2f2f4;display:grid;place-items:center"><img src="img/soap_t.png" style="width:50px"></div>
+       <div><div style="font:600 20px Inter;letter-spacing:-.01em">Olive oil soap</div><div style="font:500 14px Inter;color:#8a8a8e">Sells ~3 a day · Harbor Goods</div></div>
+       <span style="margin-left:auto;padding:5px 10px;border-radius:9px;background:#fde8e6;color:#c24a3f;font:600 12.5px Inter">Out of stock</span></div>
+     <div style="display:flex;justify-content:space-between;align-items:center;margin:22px 0 18px;padding:14px 16px;border-radius:16px;background:#f5f5f7">
+       <div><div style="font:500 13px Inter;color:#8a8a8e">Suggested order</div><div style="font:600 15px Inter">Covers the next 8 days</div></div>
+       <div style="display:flex;align-items:center;gap:14px;font:600 22px Inter"><span style="width:34px;height:34px;border-radius:17px;background:#fff;box-shadow:0 0 0 1px #e4e4e7;display:grid;place-items:center;font-size:20px">−</span>24<span style="width:34px;height:34px;border-radius:17px;background:#fff;box-shadow:0 0 0 1px #e4e4e7;display:grid;place-items:center;font-size:20px">+</span></div></div>
+     <div style="height:56px;border-radius:16px;background:#0f0f10;color:#fff;display:grid;place-items:center;font:600 17px Inter">Reorder 24 from Harbor Goods</div>
+     <div style="display:flex;justify-content:space-between;margin-top:18px;font:500 14px Inter;color:#8a8a8e"><span>Also running low</span><span style="color:#0f0f10;font-weight:600">Beeswax candle · 6</span></div></div>`);
+}
+function fit(){const s=$('stage'),k=Math.min(1,(innerWidth-0)/s.scrollWidth);s.style.transform=`scale(${k})`}
+addEventListener('resize',fit);addEventListener('load',fit);
+</script></body></html>

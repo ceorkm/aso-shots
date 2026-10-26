@@ -1,0 +1,173 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Murmur Screenshots</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#1a1a1a;font-family:Inter,sans-serif}
+#stage{display:flex;gap:40px;padding:40px;width:max-content}
+.panel{position:relative;width:603px;height:1311px;overflow:hidden;border-radius:26px;flex:none;color:#fff;
+  background:radial-gradient(110% 40% at 50% 0%,rgba(140,195,255,.55),rgba(140,195,255,0) 70%),linear-gradient(180deg,#0478ff,#1e73ff)}
+.abs{position:absolute}
+.hl{position:absolute;white-space:nowrap;line-height:1}
+/* glass pill */
+.pill{position:absolute;display:flex;align-items:center;gap:14px;height:76px;padding:0 30px 0 14px;border-radius:40px;white-space:nowrap;
+  background:linear-gradient(180deg,#3893f7,#2584f2);color:#fff;font:500 24px Inter;letter-spacing:-.01em;
+  box-shadow:inset 0 0 0 2px rgba(170,215,255,.55),inset 0 3px 0 rgba(255,255,255,.4),inset 0 -6px 14px rgba(0,40,140,.18),0 10px 22px rgba(0,40,120,.28)}
+.pill img{width:54px;height:54px}
+/* redrawn screen, 393 × 855 */
+.scr{position:absolute;left:0;top:0;width:393px;height:855px;background:#fff;overflow:hidden;color:#0f1626;font-family:Inter}
+.sb{position:absolute;left:0;right:0;top:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:6px 32px 0 44px;font:600 17px Inter}
+.di{position:absolute;left:134px;top:11px;width:125px;height:37px;border-radius:20px;background:#000}
+.hb{position:absolute;left:130px;bottom:8px;width:134px;height:5px;border-radius:3px;background:#0f1626}
+.chip{display:inline-block;padding:3px 9px;border-radius:8px;font:600 11.5px Inter}
+.av{display:grid;place-items:center;border-radius:50%;color:#fff;font:700 13px Inter;flex:none}
+/* speaker pill (on the panel) */
+.spk{position:absolute;display:flex;align-items:center;gap:12px;padding:10px 22px 10px 10px;border-radius:40px;background:#fff;color:#0f1626;box-shadow:0 14px 28px rgba(0,30,110,.3);white-space:nowrap}
+.spk .n{font:600 19px Inter}.spk .t{font:600 17px Inter;color:#0478ff;margin-left:6px}
+/* frosted keyboard */
+.kb{position:absolute;left:0;right:0;bottom:0;height:300px;z-index:6;
+  background:linear-gradient(180deg,rgba(120,180,255,.45),rgba(235,243,255,.92) 55%,#f3f7ff);backdrop-filter:blur(14px);
+  border-top:1px solid rgba(255,255,255,.6);padding:26px 10px 0}
+.kr{display:flex;justify-content:center;gap:7px;margin-bottom:11px}
+.k{height:50px;flex:0 0 51px;border-radius:9px;background:rgba(255,255,255,.75);box-shadow:0 1.5px 0 rgba(0,40,120,.25);display:grid;place-items:center;font:400 22px Inter;color:#0f1626}
+</style></head><body>
+<div id="stage">
+ <div class="panel" id="P1"></div>
+ <div class="panel" id="P2"></div>
+ <div class="panel" id="P3"></div>
+</div>
+<script src="laurel.js"></script>
+<script>
+const $=id=>document.getElementById(id), ctx=document.createElement('canvas').getContext('2d');
+const add=(p,h)=>p.insertAdjacentHTML('beforeend',h);
+function meas(t,wt,fam,ls=0){ctx.font=`${wt} 100px "${fam}"`;ctx.letterSpacing=(ls*100)+'px';const m=ctx.measureText(t),H=ctx.measureText('H');ctx.letterSpacing='0px';
+  return{l:m.actualBoundingBoxLeft,w:m.actualBoundingBoxLeft+m.actualBoundingBoxRight,fa:m.fontBoundingBoxAscent,fd:m.fontBoundingBoxDescent,cap:H.actualBoundingBoxAscent,d:m.actualBoundingBoxDescent}}
+const LS=-.03;
+// centred medium headline line, white fading to pale blue in the lower part of the glyphs
+function H(p,t,fs,y,z=3){const m=meas(t,'500','Inter',LS),k=fs/100,x=301-m.w*k/2, top=y+m.cap*k-m.fa*k, lh=(m.fa+m.fd)*k;
+  const capTop=m.fa*k-m.cap*k;  // cap top inside the line box
+  add(p,`<div class="hl" style="font:500 ${fs}px Inter;letter-spacing:${LS}em;line-height:${lh}px;left:${x+m.l*k}px;top:${top}px;z-index:${z};
+    background:linear-gradient(180deg,#fff ${capTop+m.cap*k*.3}px,#b7dcff ${capTop+m.cap*k*1.0}px);-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 4px 12px rgba(0,30,110,.28))">${t}</div>`);
+  return m.cap*k;}
+const sbar=(c='#0f1626')=>`<div class="sb" style="color:${c}"><span>9:41</span><span style="display:flex;gap:6px;align-items:center">
+  <svg width="18" height="12" fill="${c}"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+  <svg width="16" height="12" viewBox="0 0 16 12" fill="${c}"><path d="M8 11.5 5.6 8.9a3.4 3.4 0 0 1 4.8 0zM3.6 6.9a6.2 6.2 0 0 1 8.8 0l-1.3 1.3a4.4 4.4 0 0 0-6.2 0zM1.3 4.6a9.5 9.5 0 0 1 13.4 0l-1.3 1.3a7.6 7.6 0 0 0-10.8 0z"/></svg>
+  <svg width="27" height="13"><rect x=".5" y=".5" width="23" height="12" rx="3.5" fill="none" stroke="${c}" opacity=".4"/><rect x="2" y="2" width="18" height="9" rx="2" fill="${c}"/></svg></span></div><div class="di"></div>`;
+// deterministic waveform bars
+function wave(n,h,col,seed=3,w=3,gap=2){let s=seed,out='';for(let i=0;i<n;i++){s=(s*9301+49297)%233280;const r=s/233280;const a=.25+.75*Math.abs(Math.sin(i*.37+seed))*(.55+.45*r);
+  out+=`<i style="display:inline-block;width:${w}px;height:${Math.max(3,a*h)}px;border-radius:${w}px;background:${col};margin-right:${gap}px;vertical-align:middle"></i>`}return out}
+const AV={ana:['AR','linear-gradient(135deg,#ff9a62,#ff5f8a)'],ben:['BK','linear-gradient(135deg,#34d399,#0ea5e9)'],me:['JL','linear-gradient(135deg,#a78bfa,#6366f1)']};
+const av=(k,s=30)=>`<div class="av" style="width:${s}px;height:${s}px;background:${AV[k][1]};font-size:${s*.4}px">${AV[k][0]}</div>`;
+
+/* ---------- screens ---------- */
+function scrNotes(){
+  const N=[['Product sync','Meeting','#E8F1FF','#0b5fd6','42 min','Today, 10:30',1],['Pricing idea for v2','Idea','#FFF2DE','#b45f06','3 min','Today, 8:12'],
+           ['Design crit: onboarding','Meeting','#E8F1FF','#0b5fd6','28 min','Yesterday'],['Lecture: behavioral econ','Lecture','#EEE9FF','#5b3fd1','1 h 12 min','Mon'],
+           ['Call with Ben','Call','#E3F8EE','#0f8a55','17 min','Sun'],['Podcast outline','Idea','#FFF2DE','#b45f06','6 min','Sat']];
+  return `<div class="scr" style="background:#F5F8FF">${sbar()}
+   <div class="abs" style="left:20px;top:66px;font:700 30px Inter;letter-spacing:-.03em">Notes</div>
+   <div class="abs" style="right:20px;top:70px">${av('me',34)}</div>
+   <div class="abs" style="left:16px;right:16px;top:114px;height:42px;border-radius:12px;background:#fff;box-shadow:0 0 0 1px #e3eaf7;display:flex;align-items:center;gap:8px;padding:0 12px;font:500 15px Inter;color:#8a96ad">
+     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a96ad" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>Search every word</div>
+   ${N.map((n,i)=>`<div class="abs" style="left:16px;right:16px;top:${172+i*92}px;height:82px;border-radius:16px;background:#fff;box-shadow:0 2px 10px rgba(20,60,140,.06);padding:12px 14px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><b style="font:600 16px Inter;letter-spacing:-.01em">${n[0]}</b><span style="font:500 12px Inter;color:#8a96ad">${n[5]}</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:9px"><span class="chip" style="background:${n[2]};color:${n[3]}">${n[1]}</span>
+        <span style="font:500 12px Inter;color:#8a96ad">${n[4]}</span><span style="margin-left:auto;line-height:0">${wave(26,18,n[6]?'#0478ff':'#c5d2ea',i+2,2.5,2)}</span></div></div>`).join('')}
+   <div class="abs" style="left:150px;bottom:34px;width:92px;height:92px;border-radius:46px;background:#0478ff;box-shadow:0 12px 26px rgba(4,120,255,.45),0 0 0 8px rgba(4,120,255,.12);display:grid;place-items:center">
+     <div style="width:30px;height:30px;border-radius:15px;background:#fff"></div></div>
+   <div class="hb"></div></div>`;
+}
+function scrRecord(){
+  return `<div class="scr" style="background:#0d1424;color:#fff">${sbar('#fff')}
+   <div class="abs" style="left:0;right:0;top:78px;text-align:center;font:600 13px Inter;letter-spacing:.14em;color:#ff5a6a">● RECORDING</div>
+   <div class="abs" style="left:0;right:0;top:104px;text-align:center;font:600 19px Inter">Product sync</div>
+   <div class="abs" style="left:0;right:0;top:150px;text-align:center;font:500 76px/1 Inter;letter-spacing:-.04em">12:48</div>
+   <div class="abs" style="left:24px;right:24px;top:262px;height:150px;display:flex;align-items:center;justify-content:center;line-height:0">${wave(56,140,'linear-gradient(180deg,#7cc0ff,#0478ff)',7,3.5,2.6)}</div>
+   <div class="abs" style="left:0;right:0;top:440px;display:flex;justify-content:center;gap:10px">${['ana','ben','me'].map(k=>av(k,34)).join('')}</div>
+   <div class="abs" style="left:0;right:0;top:486px;text-align:center;font:500 14px Inter;color:#93a3c4">3 speakers detected</div>
+   <div class="abs" style="left:0;right:0;top:560px;display:flex;justify-content:center;align-items:center;gap:36px">
+     <div style="width:58px;height:58px;border-radius:29px;background:#1c2740;display:grid;place-items:center"><div style="display:flex;gap:6px"><i style="width:6px;height:20px;background:#fff;border-radius:2px"></i><i style="width:6px;height:20px;background:#fff;border-radius:2px"></i></div></div>
+     <div style="width:84px;height:84px;border-radius:42px;background:#ff3b4e;display:grid;place-items:center;box-shadow:0 0 0 8px rgba(255,59,78,.18)"><div style="width:28px;height:28px;border-radius:6px;background:#fff"></div></div>
+     <div style="width:58px;height:58px;border-radius:29px;background:#1c2740;display:grid;place-items:center;font:700 16px Inter">Aa</div></div>
+   <div class="hb" style="background:#fff"></div></div>`;
+}
+function scrTranscript(){
+  const L=[['ana','Ana','04:12','So the main blocker is the <b style="background:#dbeaff;color:#0b5fd6;padding:0 3px;border-radius:4px">onboarding</b> drop-off on step three.'],
+           ['ben','Ben','04:31','Agreed. If we cut the permissions screen we could test it this sprint.'],
+           ['ana','Ana','04:48','Let’s ship the shorter flow to 10% of new users on Monday.'],
+           ['me','You','05:02','I’ll write the brief and share it by Friday.']];
+  return `<div class="scr" style="background:#fff">${sbar()}
+   <div class="abs" style="left:20px;right:20px;top:66px;display:flex;justify-content:space-between;align-items:center"><b style="font:700 22px Inter;letter-spacing:-.02em">Live transcript</b><span class="chip" style="background:#E8F1FF;color:#0b5fd6;font-size:13px">● Live</span></div>
+   ${L.map((l,i)=>`<div class="abs" style="left:20px;right:20px;top:${118+i*128}px;display:flex;gap:12px">${av(l[0],32)}
+     <div><div style="font:600 14px Inter">${l[1]} <span style="color:#0478ff;font-weight:600;margin-left:4px">${l[2]}</span></div>
+     <div style="font:400 17px/1.45 Inter;color:#26324a;margin-top:4px">${l[3]}</div></div></div>`).join('')}
+   <div class="hb"></div></div>`;
+}
+function scrSummary(){
+  const KP=['Onboarding drop-off is highest on step 3','Removing the permissions screen is the fastest test','Ship the shorter flow to 10% on Monday'];
+  const AI=[['Write the test brief','me','Fri',1],['Update the onboarding copy','ana','Mon',0],['Set up the 10% rollout','ben','Mon',0]];
+  return `<div class="scr" style="background:#F5F8FF">${sbar()}
+   <div class="abs" style="left:20px;top:64px;font:500 14px Inter;color:#8a96ad">Today · 42 min · 3 speakers</div>
+   <div class="abs" style="left:20px;top:84px;font:700 28px Inter;letter-spacing:-.03em">Product sync</div>
+   <div class="abs" style="left:16px;right:16px;top:134px;border-radius:18px;background:#fff;box-shadow:0 2px 12px rgba(20,60,140,.06);padding:16px">
+     <div style="display:flex;align-items:center;gap:8px;font:700 13px Inter;letter-spacing:.08em;color:#0478ff"><img src="img/sparkles_3d.png" style="width:20px">AI SUMMARY</div>
+     <div style="font:500 16px/1.45 Inter;color:#26324a;margin-top:8px">The team agreed to shorten onboarding and test it with a small share of new users next week.</div></div>
+   <div class="abs" style="left:20px;top:290px;font:700 17px Inter">Key points</div>
+   <div class="abs" style="left:16px;right:16px;top:320px;border-radius:18px;background:#fff;box-shadow:0 2px 12px rgba(20,60,140,.06);padding:6px 16px">
+     ${KP.map((k,i)=>`<div style="display:flex;gap:10px;padding:11px 0;${i?'border-top:1px solid #eef2fa':''};font:500 15px/1.35 Inter;color:#26324a"><i style="flex:none;width:7px;height:7px;border-radius:4px;background:#0478ff;margin-top:7px"></i>${k}</div>`).join('')}</div>
+   <div class="abs" style="left:20px;top:510px;font:700 17px Inter">Action items</div>
+   <div class="abs" style="left:16px;right:16px;top:540px;border-radius:18px;background:#fff;box-shadow:0 2px 12px rgba(20,60,140,.06);padding:4px 16px">
+     ${AI.map((a,i)=>`<div style="display:flex;align-items:center;gap:12px;padding:12px 0;${i?'border-top:1px solid #eef2fa':''}">
+       <div style="width:22px;height:22px;border-radius:7px;${a[3]?'background:#0478ff':'box-shadow:inset 0 0 0 2px #c5d2ea'};display:grid;place-items:center;color:#fff;font:700 13px Inter">${a[3]?'✓':''}</div>
+       <span style="font:500 15px Inter;color:${a[3]?'#8a96ad':'#26324a'};${a[3]?'text-decoration:line-through':''}">${a[0]}</span>
+       <span style="margin-left:auto;display:flex;align-items:center;gap:8px;font:500 12px Inter;color:#8a96ad">${a[2]}${av(a[1],24)}</span></div>`).join('')}</div>
+   <div class="hb"></div></div>`;
+}
+/* ---------- device: real frame PNG (1350×2760, hole 72,69 1205×2621) + 1.5px white outline ---------- */
+function phone(w,inner){const k=w/1350,s=1205*k/393;
+  return `<div style="position:relative;width:${w}px;height:${2760*k}px;filter:drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff)">
+   <div style="position:absolute;left:${72*k}px;top:${69*k}px;width:${1205*k}px;height:${2621*k}px;overflow:hidden;border-radius:${165*k}px"><div style="transform:scale(${s});transform-origin:0 0">${inner}</div></div>
+   <img src="img/frame.png" style="position:absolute;inset:0;width:100%;height:100%"></div>`;}
+// laurel branch (SVG), mirrored for the right side
+function laurel(flip){   // traced laurel branch (laurel.js), mirrored for the right side
+  return `<svg width="38" height="73" viewBox="${LAUREL.vb}" preserveAspectRatio="none" style="${flip?'transform:scaleX(-1)':''}">${LAUREL.d.map(d=>`<path d="${d}" fill="rgba(255,255,255,.92)"/>`).join('')}</svg>`;}
+const badge=(l1,l2)=>`<div style="display:flex;align-items:center;gap:6px">${laurel(0)}<div style="text-align:center;font:600 17px/1.3 Inter;letter-spacing:.1em;color:#fff">${l1}<br>${l2}</div>${laurel(1)}</div>`;
+const pill=(p,x,y,ic,t,rot)=>add(p,`<div class="pill" style="left:${x}px;top:${y}px;transform:rotate(${rot}deg);z-index:5"><img src="img/${ic}.png">${t}</div>`);
+
+Promise.all(['500 50px Inter','600 50px Inter','700 50px Inter'].map(f=>document.fonts.load(f))).then(()=>document.fonts.ready).then(build);
+function build(){
+  const fs=Math.min(...['Every meeting,','remembered','Who said what,','word for word','Notes that','write themselves'].map(t=>100*510/meas(t,'500','Inter',LS).w));
+  const gap=f=>meas('H','500','Inter').cap*f/100*1.42;
+
+  /* P1 — hero: tilted-back phone + laurels + stacked glass pills */
+  const P1=$('P1'), f1=fs*1.04;
+  H(P1,'Every meeting,',f1,96); H(P1,'remembered',f1,96+gap(f1));
+  add(P1,`<div class="abs" style="left:0;right:0;top:${96+gap(f1)*2+28}px;display:flex;justify-content:center;gap:34px">${badge('PRIVATE','BY DESIGN')}${badge('WORKS','OFFLINE')}</div>`);
+  add(P1,`<div class="abs" style="left:76px;top:262px;width:451px;perspective:1300px;z-index:2">
+     <div style="transform:rotateX(26deg);transform-origin:50% 100%;filter:drop-shadow(0 40px 50px rgba(0,25,100,.45))">${phone(451,scrNotes())}</div></div>`);
+  pill(P1,36,1030,'studio_microphone_3d','Record anything',-3);
+  pill(P1,182,1118,'memo_3d','Instant summaries',2);
+  pill(P1,54,1206,'magnifying_glass_tilted_right_3d','Search every word',-2);
+
+  /* P2 — two stacked phones, headline in the middle, speaker pills */
+  const P2=$('P2');
+  add(P2,`<div class="abs" style="left:111px;top:-138px;z-index:1;filter:drop-shadow(0 30px 40px rgba(0,25,100,.4))">${phone(381,scrRecord())}</div>`);
+  const y2=690; H(P2,'Who said what,',fs,y2); H(P2,'word for word',fs,y2+gap(fs));
+  add(P2,`<div class="abs" style="left:111px;top:${y2+gap(fs)*2+44}px;z-index:2;filter:drop-shadow(0 30px 40px rgba(0,25,100,.4))">${phone(381,scrTranscript())}</div>`);
+  add(P2,`<div class="spk" style="left:22px;top:1010px;transform:rotate(-4deg);z-index:5">${av('ana',46)}<span class="n">Ana</span><span class="t">04:12</span></div>`);
+  add(P2,`<div class="spk" style="left:330px;top:1146px;transform:rotate(3deg);z-index:5">${av('ben',46)}<span class="n">Ben</span><span class="t">04:31</span></div>`);
+
+  /* P3 — headline top, front phone with summary, rotated glass pill, frosted keyboard */
+  const P3=$('P3');
+  H(P3,'Notes that',fs,96); H(P3,'write themselves',fs,96+gap(fs));
+  add(P3,`<div class="abs" style="left:101px;top:${96+gap(fs)*2+96}px;z-index:2;filter:drop-shadow(0 30px 40px rgba(0,25,100,.4))">${phone(401,scrSummary())}</div>`);
+  add(P3,`<div class="pill" style="left:292px;top:${96+gap(fs)*2+56}px;transform:rotate(-6deg);z-index:5"><img src="img/sparkles_3d.png">with AI summaries</div>`);
+  const rows=['qwertyuiop','asdfghjkl','zxcvbnm'];
+  add(P3,`<div class="kb">
+     <div style="margin:0 12px 16px;height:54px;border-radius:27px;background:#fff;box-shadow:0 6px 16px rgba(0,40,120,.15);display:flex;align-items:center;gap:10px;padding:0 8px 0 20px;font:500 19px Inter;color:#0f1626">
+       Ask your notes: what did we decide?<span style="margin-left:auto;width:40px;height:40px;border-radius:20px;background:#0478ff;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></span></div>
+     ${rows.map(r=>`<div class="kr">${[...r].map(c=>`<span class="k">${c}</span>`).join('')}</div>`).join('')}</div>`);
+}
+</script></body></html>

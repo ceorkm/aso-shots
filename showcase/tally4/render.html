@@ -1,0 +1,96 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:transparent}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"./lib/build/three.module.js"}}</script></head><body>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from './lib/examples/jsm/environments/RoomEnvironment.js';
+import { TeapotGeometry } from './lib/examples/jsm/geometries/TeapotGeometry.js';
+import { RoundedBoxGeometry } from './lib/examples/jsm/geometries/RoundedBoxGeometry.js';
+
+THREE.ColorManagement.legacyMode = false;
+const q = new URLSearchParams(location.search);
+const scene_ = q.get('scene') || 'shelf', W = +(q.get('w') || 1800), H = +(q.get('h') || 760);
+const R = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+R.setPixelRatio(1); R.setSize(W, H); R.setClearColor(0x000000, 0);
+R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap;
+R.outputEncoding = THREE.sRGBEncoding; R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = .95;
+document.body.appendChild(R.domElement);
+const S = new THREE.Scene();
+S.environment = new THREE.PMREMGenerator(R).fromScene(new RoomEnvironment(), 0.04).texture;
+
+const mat = (c, r = .72, m = 0) => new THREE.MeshStandardMaterial({ color: c, roughness: r, metalness: m, envMapIntensity: .55 });
+const mesh = (g, m) => { const o = new THREE.Mesh(g, m); o.castShadow = o.receiveShadow = true; return o; };
+
+// ---- products (all matte, grayscale) ----
+function bottle() {
+  const g = new THREE.Group(), pts = [];
+  [[0, 0], [.30, 0], [.33, .04], [.33, 1.0], [.28, 1.12], [.12, 1.22], [.11, 1.34], [0, 1.34]].forEach(([x, y]) => pts.push(new THREE.Vector2(x, y)));
+  g.add(mesh(new THREE.LatheGeometry(pts, 64), mat(0x8a8a8a, .45)));
+  const cap = mesh(new THREE.CylinderGeometry(.13, .13, .2, 48), mat(0x1c1c1c, .55)); cap.position.y = 1.44; g.add(cap);
+  const pump = mesh(new THREE.CylinderGeometry(.035, .035, .16, 24), mat(0x1c1c1c, .5)); pump.position.y = 1.62; g.add(pump);
+  const nozzle = mesh(new THREE.BoxGeometry(.26, .06, .07), mat(0x1c1c1c, .5)); nozzle.position.set(.1, 1.7, 0); g.add(nozzle);
+  const label = mesh(new THREE.CylinderGeometry(.334, .334, .42, 64, 1, true), mat(0xf2f1ee, .85)); label.position.y = .5; g.add(label);
+  return g;
+}
+function candle() {
+  const g = new THREE.Group();
+  const jar = mesh(new THREE.CylinderGeometry(.38, .36, .66, 64, 1, true), mat(0xe0ddd6, .82)); jar.position.y = .33; g.add(jar);
+  const base = mesh(new THREE.CylinderGeometry(.36, .36, .04, 64), mat(0xe0ddd6, .82)); base.position.y = .02; g.add(base);
+  const wax = mesh(new THREE.CylinderGeometry(.35, .35, .5, 64), mat(0xd6d3cc, .95)); wax.position.y = .3; g.add(wax);
+  const rim = mesh(new THREE.TorusGeometry(.375, .018, 12, 64), mat(0xe0ddd6, .8)); rim.rotation.x = Math.PI / 2; rim.position.y = .66; g.add(rim);
+  const wick = mesh(new THREE.CylinderGeometry(.012, .012, .1, 8), mat(0x111111, .9)); wick.position.y = .6; g.add(wick);
+  return g;
+}
+function soap() {
+  const g = new THREE.Group(); const cols = [0xefede8, 0xbdbdbd, 0x7c7c7c];
+  cols.forEach((c, i) => { const b = mesh(new RoundedBoxGeometry(.78, .19, .5, 4, .06), mat(c, .9)); b.position.set((i % 2 ? .04 : -.03), .095 + i * .2, 0); b.rotation.y = [.08, -.12, .18][i]; g.add(b); });
+  return g;
+}
+function teapot() {
+  const g = new THREE.Group(); const t = mesh(new TeapotGeometry(.33, 10), mat(0x2a2a2a, .38)); t.position.y = .25; t.rotation.y = -.5; g.add(t); return g;
+}
+function mug() {
+  const g = new THREE.Group();
+  const body = mesh(new THREE.CylinderGeometry(.3, .27, .58, 64), mat(0xa3a3a3, .7)); body.position.y = .29; g.add(body);
+  const h = mesh(new THREE.TorusGeometry(.15, .045, 16, 48, Math.PI * 1.25), mat(0xa3a3a3, .7)); h.position.set(.31, .3, 0); h.rotation.z = -Math.PI * .62; g.add(h);
+  g.rotation.y = -.35; return g;
+}
+function jar() {
+  const g = new THREE.Group();
+  const body = mesh(new THREE.CylinderGeometry(.27, .27, .5, 64), mat(0x565656, .55)); body.position.y = .25; g.add(body);
+  const lid = mesh(new THREE.CylinderGeometry(.28, .28, .14, 64), mat(0x1e1e1e, .5)); lid.position.y = .57; g.add(lid);
+  const lab = mesh(new THREE.CylinderGeometry(.272, .272, .2, 64, 1, true), mat(0xf2f1ee, .85)); lab.position.y = .25; g.add(lab);
+  return g;
+}
+const MAKERS = { bottle, candle, soap, teapot, mug, jar };
+const ROW = [['bottle', -3.55], ['candle', -2.25], ['soap', -0.85], ['teapot', 0.65], ['mug', 2.1], ['jar', 3.4]];
+
+let cam;
+const out = {};
+if (scene_ === 'shelf' || scene_ === 'gap') {
+  // two floating shelves (portrait), a wall behind that only catches shadows
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.ShadowMaterial({ opacity: .045 })); wall.position.z = -1.05; wall.receiveShadow = true; S.add(wall);
+  const TIERS = [[2.05, [['bottle', -1.5], ['candle', 0.02], ['soap', 1.55]]], [0, [['teapot', -1.45], ['mug', 0.05], ['jar', 1.5]]]];
+  TIERS.forEach(([y, items]) => {
+    const shelf = mesh(new RoundedBoxGeometry(4.7, .2, 1.6, 4, .04), mat(0xd2d2d5, .8)); shelf.position.set(0, y - .1, 0); S.add(shelf);
+    items.forEach(([k, x]) => { if (scene_ === 'gap' && k === 'soap') return; const o = MAKERS[k](); o.position.set(x, y, .05); o.userData.k = k; S.add(o); });
+  });
+  cam = new THREE.PerspectiveCamera(26, W / H, .1, 100); cam.position.set(0, 3.4, 12.4); cam.lookAt(0, 1.32, 0);
+} else {
+  const o = MAKERS[scene_](); S.add(o);
+  const box = new THREE.Box3().setFromObject(o), c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3());
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.ShadowMaterial({ opacity: .0 })); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; S.add(ground);
+  cam = new THREE.PerspectiveCamera(22, W / H, .1, 100); const d = Math.max(sz.x, sz.y) * 3.4; cam.position.set(c.x + d * .2, c.y + d * .28, c.z + d); cam.lookAt(c);
+}
+// light: soft key from upper left + fill + rim
+const key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(-2.5, 6, 10); key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048); key.shadow.radius = 14; Object.assign(key.shadow.camera, { left: -6, right: 6, top: 6, bottom: -3 }); key.shadow.bias = -.0004; S.add(key);
+S.add(new THREE.HemisphereLight(0xffffff, 0x9a9a9a, .55));
+const rim = new THREE.DirectionalLight(0xffffff, .5); rim.position.set(6, 4, -5); S.add(rim);
+R.render(S, cam);
+// screen positions of each product's top-centre (for tags in the page)
+S.children.forEach(o => { if (!o.userData.k) return; const b = new THREE.Box3().setFromObject(o), p = new THREE.Vector3((b.min.x + b.max.x) / 2, b.max.y, (b.min.z + b.max.z) / 2).project(cam);
+  out[o.userData.k] = [Math.round((p.x + 1) / 2 * W), Math.round((1 - p.y) / 2 * H)]; });
+if (scene_ === 'gap') { const p = new THREE.Vector3(1.55, 2.65, 0).project(cam); out.soap = [Math.round((p.x + 1) / 2 * W), Math.round((1 - p.y) / 2 * H)]; }
+window.__pos = out; window.__done = true;
+</script></body></html>

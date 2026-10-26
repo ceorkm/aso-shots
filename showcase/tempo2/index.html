@@ -1,0 +1,205 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tempo Screenshots</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9e9e7;--fg:#141414;--mut:#666;--lime:#D7FF3A;--ink:#0B0B0C}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161616;--fg:#eee;--mut:#9a9a9a}}
+:root[data-theme="dark"]{--bg:#161616;--fg:#eee;--mut:#9a9a9a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 Inter,system-ui,sans-serif}
+header{max-width:1960px;margin:0 auto;padding:28px 16px 6px}
+h1{font:600 21px/1.2 Inter;margin:0 0 6px;letter-spacing:-.01em}
+header p{margin:0;color:var(--mut)}
+#wrap{overflow:hidden;max-width:1960px;margin:0 auto;padding:16px}
+/* white stage, panels side by side (style 10: saturated blocks on white) */
+#stage{position:relative;width:1931px;height:1351px;background:#fff;border-radius:30px;transform-origin:0 0}
+.panel{position:absolute;top:20px;width:603px;height:1311px;overflow:hidden;border-radius:30px;font-family:Outfit}
+.abs{position:absolute}
+.hl{position:absolute;white-space:nowrap;line-height:1}
+/* redrawn Tempo screens, 393 × 855 pt */
+.scr{position:absolute;left:0;top:0;width:393px;height:855px;background:#0B0B0C;transform-origin:0 0;overflow:hidden;font-family:Inter;color:#fff}
+.scr .sb{position:absolute;left:0;right:0;top:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:6px 32px 0 44px;font:600 17px Inter}
+.scr .sb svg{fill:#fff}
+.scr .mut{color:rgba(255,255,255,.5)}
+.scr .card{position:absolute;left:16px;right:16px;border-radius:22px;background:#161618;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+.scr .hb{position:absolute;left:130px;bottom:8px;width:134px;height:5px;border-radius:3px;background:#fff}
+.lbl{font:600 12.5px Inter;letter-spacing:.12em;color:rgba(255,255,255,.55);text-transform:uppercase}
+</style></head><body>
+<header><h1>Tempo · App Store screenshots 1–3 · style 10 Bold Color Blocks + 3D</h1><p>Fictional running-coach app. Three saturated panels on white, rotated wordmark watermark and blobs crossing the panels, tilted phones, real 3D chrome medals.</p></header>
+<div id="wrap"><div id="stage"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+<script>
+const $=id=>document.getElementById(id), ctx=document.createElement('canvas').getContext('2d');
+const add=(p,h)=>p.insertAdjacentHTML('beforeend',h);
+const PX=[20,664,1308], PW=603, PH=1311;          // panel x in stage coords
+const COL=['#C6F432','#1640D6','#FF4D3D'];           // lime, cobalt, coral
+const INK=['#0B0B0C','#fff','#fff'];
+const WM=['#B3DE1C','#2C56EC','#FF6556'];            // watermark tints (~30% contrast)
+const BLOB=['#D6FA63','#2F5BF0','#FF6E60'];
+const P=[];
+// stage-coordinate element replicated into every panel (each panel clips its own slice)
+function across(html){P.forEach((p,i)=>add(p,html(i,PX[i])));}
+
+function meas(t,wt){ctx.font=`${wt} 100px Outfit`;const m=ctx.measureText(t),H=ctx.measureText('H');return{l:m.actualBoundingBoxLeft,w:m.actualBoundingBoxLeft+m.actualBoundingBoxRight,fa:m.fontBoundingBoxAscent,fd:m.fontBoundingBoxDescent,cap:H.actualBoundingBoxAscent}}
+function T(p,t,wt,fs,x,y,color,css=''){const m=meas(t,wt),k=fs/100;
+  add(p,`<div class="hl" style="font:${wt} ${fs}px/${(m.fa+m.fd)*k}px Outfit;letter-spacing:-.02em;left:${x+m.l*k}px;top:${y+m.cap*k-m.fa*k}px;color:${color};z-index:6;${css}">${t}</div>`);return m.cap*k;}
+
+const SB=`<div class="sb"><span>9:41</span><span style="display:flex;gap:6px;align-items:center">
+  <svg width="18" height="12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+  <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 11.5 5.6 8.9a3.4 3.4 0 0 1 4.8 0zM3.6 6.9a6.2 6.2 0 0 1 8.8 0l-1.3 1.3a4.4 4.4 0 0 0-6.2 0zM1.3 4.6a9.5 9.5 0 0 1 13.4 0l-1.3 1.3a7.6 7.6 0 0 0-10.8 0z"/></svg>
+  <svg width="27" height="13"><rect x=".5" y=".5" width="23" height="12" rx="3.5" fill="none" stroke="#fff" opacity=".45"/><rect x="2" y="2" width="16" height="9" rx="2"/></svg></span></div>`;
+
+/* ---------- redrawn screens (same app as before) ---------- */
+function paceChart(w,h){const pts=[5.2,5.05,4.95,4.9,4.86,4.92,4.8,4.84,4.88,4.95,4.87,4.82,4.86,4.9,4.85,4.78,4.84,4.87];
+  const x=i=>i*w/(pts.length-1), y=v=>h-(5.3-v)/(5.3-4.7)*h;
+  const d=pts.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><rect x="0" y="${y(4.8)}" width="${w}" height="${y(5.0)-y(4.8)}" fill="rgba(215,255,58,.09)"/>
+   <path d="${d} L ${w} ${h} L 0 ${h} Z" fill="url(#pg)"/><defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D7FF3A" stop-opacity=".28"/><stop offset="1" stop-color="#D7FF3A" stop-opacity="0"/></linearGradient></defs>
+   <path d="${d}" fill="none" stroke="#D7FF3A" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${x(pts.length-1)}" cy="${y(pts.at(-1))}" r="6" fill="#D7FF3A" stroke="#0B0B0C" stroke-width="3"/></svg>`;}
+function screenRun(){
+  const m=(k,v,u)=>`<div><div class="lbl" style="font-size:11px">${k}</div><div style="font:700 30px 'Inter Tight';letter-spacing:-.03em;margin-top:4px">${v}<span style="font:500 14px Inter;color:rgba(255,255,255,.5);margin-left:4px">${u}</span></div></div>`;
+  return `<div class="scr">${SB}
+   <div style="position:absolute;left:20px;right:20px;top:66px;display:flex;justify-content:space-between;align-items:center">
+     <div><div class="lbl" style="font-size:11px;color:var(--lime)">● Live · Tempo run</div><div style="font:600 17px Inter;margin-top:4px">Interval 3 of 5</div></div>
+     <div style="font:600 14px Inter;padding:8px 12px;border-radius:12px;background:#1b1b1e">Target 5:00</div></div>
+   <div style="position:absolute;left:20px;top:150px"><div class="lbl" style="font-size:11px">Current pace</div>
+     <div style="font:800 118px/1 'Inter Tight';letter-spacing:-.05em;margin-top:6px">4:52<span style="font:600 22px Inter;color:rgba(255,255,255,.5);letter-spacing:0;margin-left:8px">/km</span></div></div>
+   <div style="position:absolute;left:20px;top:300px">${paceChart(353,120)}</div>
+   <div class="card" style="top:446px;padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;row-gap:18px">
+     ${m('Distance','3.21','km')}${m('Time','15:27','')}${m('Heart rate','162','bpm')}${m('Cadence','178','spm')}</div>
+   <div class="card" style="top:648px;height:64px;display:flex;align-items:center;gap:12px;padding:0 16px">
+     <div style="width:34px;height:34px;border-radius:17px;background:var(--lime);display:grid;place-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="#0B0B0C"><path d="M4 9h3l5-5v16l-5-5H4z"/><path d="M16 8a5 5 0 0 1 0 8" stroke="#0B0B0C" stroke-width="2.4" fill="none"/></svg></div>
+     <div style="font:500 14px Inter;color:rgba(255,255,255,.8)">Coach: Ease off — hold 5:00</div></div>
+   <div style="position:absolute;left:0;right:0;top:740px;display:flex;justify-content:center;gap:30px;align-items:center">
+     <div style="width:58px;height:58px;border-radius:29px;background:#1b1b1e;display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+     <div style="width:80px;height:80px;border-radius:40px;background:var(--lime);display:grid;place-items:center;box-shadow:0 0 40px rgba(215,255,58,.35)"><svg width="26" height="26" viewBox="0 0 24 24" fill="#0B0B0C"><rect x="6" y="4" width="4" height="16" rx="1.5"/><rect x="14" y="4" width="4" height="16" rx="1.5"/></svg></div>
+     <div style="width:58px;height:58px;border-radius:29px;background:#1b1b1e;display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg></div></div>
+   <div class="hb"></div></div>`;}
+
+// Progress / personal-bests screen (new)
+function screenPB(){
+  const pts=[26.4,26.0,25.5,25.1,24.8,24.3,24.0,23.68], w=353, h=150;
+  const x=i=>i*w/(pts.length-1), y=v=>12+(26.6-v)/(26.6-23.4)*(h-24);
+  const d=pts.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+  const row=(n,t,s,isNew)=>`<div style="display:flex;align-items:center;padding:15px 0;border-top:1px solid #1d1d20"><div style="font:600 16px Inter">${n}</div>${isNew?'<span style="margin-left:10px;padding:3px 8px;border-radius:8px;background:var(--lime);color:#0B0B0C;font:700 11px Inter;letter-spacing:.06em">NEW PB</span>':''}<div style="margin-left:auto;text-align:right"><div style="font:700 18px 'Inter Tight';letter-spacing:-.02em">${t}</div><div style="font:500 12px Inter;color:rgba(255,255,255,.5)">${s}</div></div></div>`;
+  return `<div class="scr">${SB}
+   <div style="position:absolute;left:20px;right:20px;top:66px"><div class="lbl" style="font-size:11px">Progress</div><div style="font:700 30px 'Inter Tight';letter-spacing:-.03em;margin-top:4px">Personal bests</div></div>
+   <div class="card" style="top:136px;padding:18px 20px 14px">
+     <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="lbl" style="font-size:11px">5K time · 8 weeks</span><span style="font:700 15px Inter;color:var(--lime)">−2:43</span></div>
+     <div style="font:800 52px/1 'Inter Tight';letter-spacing:-.04em;margin:10px 0 6px">23:41</div>
+     <svg width="${w-40}" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path d="${d} L ${w} ${h} L 0 ${h} Z" fill="url(#pb)"/><defs><linearGradient id="pb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D7FF3A" stop-opacity=".25"/><stop offset="1" stop-color="#D7FF3A" stop-opacity="0"/></linearGradient></defs><path d="${d}" fill="none" stroke="#D7FF3A" stroke-width="3.5" stroke-linejoin="round"/></svg></div>
+   <div class="card" style="top:438px;padding:4px 20px">${row('5K','23:41','Today',1)}${row('10K','51:08','Sep 14')}${row('Half marathon','1:58:30','May 3')}<div style="padding:6px 0"></div></div>
+   <div class="card" style="top:668px;padding:16px 20px;display:flex;gap:14px;align-items:center">
+     ${['#E8B64A','#C9CCD3','#C77B3F','#2a2a2e'].map((c,i)=>`<div style="width:46px;height:46px;border-radius:23px;background:radial-gradient(circle at 35% 30%,#fff8,${c} 55%);box-shadow:inset 0 0 0 3px ${i==3?'#333':'#0003'}"></div>`).join('')}
+     <div style="margin-left:auto;text-align:right"><div style="font:600 15px Inter">12 medals</div><div style="font:500 12px Inter;color:rgba(255,255,255,.5)">3 this month</div></div></div>
+   <div class="hb"></div></div>`;}
+
+const WEEK=[['Mon','Rest','Recovery day','',0],['Tue','Easy run','5 km · 5:45 /km','32 min',0],['Wed','Strength','Core + hips','20 min',0],
+            ['Thu','Intervals','6 × 400 m · 4:30 /km','38 min',1],['Fri','Rest','Recovery day','',0],['Sat','Tempo run','6 km · 5:00 /km','31 min',0],['Sun','Long run','10 km · 6:00 /km','60 min',0]];
+function screenPlan(){
+  return `<div class="scr">${SB}
+   <div style="position:absolute;left:20px;right:20px;top:66px">
+     <div class="lbl" style="font-size:11px">5K plan · Week 6 of 10</div>
+     <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:4px"><div style="font:700 30px 'Inter Tight';letter-spacing:-.03em">This week</div><div style="font:600 15px Inter"><span style="color:var(--lime)">12.6</span><span class="mut"> / 27 km</span></div></div>
+     <div style="height:6px;border-radius:3px;background:#1d1d20;margin-top:12px;overflow:hidden"><div style="width:47%;height:100%;background:var(--lime);border-radius:3px"></div></div></div>
+   <div style="position:absolute;left:16px;right:16px;top:170px;display:flex;justify-content:space-between">
+     ${WEEK.map((d,i)=>`<div style="width:46px;height:66px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;${d[4]?'background:var(--lime);color:#0B0B0C':'background:#161618'}">
+       <span style="font:600 11px Inter;${d[4]?'':'color:rgba(255,255,255,.5)'}">${d[0][0]}</span><span style="font:700 17px Inter">${20+i}</span></div>`).join('')}</div>
+   ${WEEK.map((d,i)=>`<div class="card" style="top:${256+i*76}px;height:66px;display:flex;align-items:center;gap:14px;padding:0 16px;${d[4]?'box-shadow:inset 0 0 0 1.5px var(--lime)':''}${i<3?';opacity:.55':''}">
+       <div style="width:40px;font:600 12px Inter;color:rgba(255,255,255,.5)">${d[0].toUpperCase()}</div>
+       <div><div style="font:600 16px Inter">${d[1]}${i<3&&d[1]!='Rest'?' <span style="color:var(--lime)">✓</span>':''}</div><div style="font:500 13px Inter;color:rgba(255,255,255,.5)">${d[2]}</div></div>
+       <div style="margin-left:auto;font:600 14px Inter;color:rgba(255,255,255,.7)">${d[3]}</div></div>`).join('')}
+   <div class="hb"></div></div>`;}
+
+// real frame PNG (1350 × 2760, screen hole 72,69 1205×2621) with a screen inside
+function phone(w,inner){const k=w/1350,s=1205*k/393;
+  return `<div style="position:relative;width:${w}px;height:${2760*k}px"><div style="position:absolute;left:${72*k}px;top:${69*k}px;width:${1205*k}px;height:${2621*k}px;overflow:hidden;border-radius:${150*k}px;background:#0B0B0C">
+   <div style="transform:scale(${s});transform-origin:0 0">${inner}</div></div><img src="img/frame.png" style="position:absolute;inset:0;width:100%;height:100%"></div>`;}
+
+/* ---------- real 3D: chrome / gold race medals (Three.js r149) ---------- */
+function medalImg(face,metalHex,size=520){
+  const R=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
+  R.setPixelRatio(1);R.setSize(size,size);R.outputEncoding=THREE.sRGBEncoding;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.6;
+  // studio environment: dark sphere + bright softbox planes
+  const envS=new THREE.Scene();
+  envS.add(new THREE.Mesh(new THREE.SphereGeometry(20,32,16),new THREE.MeshBasicMaterial({color:0x1a1a1a,side:THREE.BackSide})));
+  const box=(w,h,x,y,z,ry,rx,int=1)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(int,int,int),side:THREE.DoubleSide}));m.position.set(x,y,z);m.rotation.set(rx||0,ry||0,0);envS.add(m);};
+  box(10,4,0,9,4,0,Math.PI/2,3);box(4,10,-10,2,3,Math.PI/2,0,2);box(4,10,10,1,3,-Math.PI/2,0,1.6);box(12,3,0,-6,9,0,-.4,1.1);box(6,6,3,4,12,0,0,1.4);
+  const pm=new THREE.PMREMGenerator(R), env=pm.fromScene(envS,.02).texture;
+  const scene=new THREE.Scene(); scene.environment=env;
+  const cam=new THREE.PerspectiveCamera(26,1,.1,100); cam.position.set(0,0,9.2);
+  // embossed face: bump map from a canvas (raised text + inner ring + laurel ticks)
+  const c=document.createElement('canvas');c.width=c.height=1024;const g=c.getContext('2d');
+  g.fillStyle='#000';g.fillRect(0,0,1024,1024);g.translate(512,512);
+  g.strokeStyle='#fff';g.lineWidth=26;g.beginPath();g.arc(0,0,400,0,Math.PI*2);g.stroke();
+  for(let i=0;i<36;i++){g.save();g.rotate(i/36*Math.PI*2);g.fillStyle='#bbb';g.beginPath();g.ellipse(0,-350,10,26,0,0,Math.PI*2);g.fill();g.restore();}
+  g.fillStyle='#fff';g.font=`900 ${face.length>2?250:320}px Outfit`;g.textAlign='center';g.textBaseline='middle';g.fillText(face,0,22);
+  const bump=new THREE.CanvasTexture(c); bump.anisotropy=8; bump.center.set(.5,.5); bump.rotation=Math.PI/2;
+  const col=new THREE.Color(metalHex);
+  const faceM=new THREE.MeshPhysicalMaterial({color:col,metalness:1,roughness:.1,clearcoat:.7,clearcoatRoughness:.12,bumpMap:bump,bumpScale:.06});
+  const sideM=new THREE.MeshPhysicalMaterial({color:col.clone().multiplyScalar(.92),metalness:1,roughness:.2,clearcoat:.5});
+  const grp=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(2,2,.34,128,1),[sideM,faceM,sideM]); body.rotation.x=Math.PI/2; grp.add(body);
+  const rim=new THREE.Mesh(new THREE.TorusGeometry(2,.13,24,160),sideM); grp.add(rim);
+  const loop=new THREE.Mesh(new THREE.TorusGeometry(.32,.09,16,48),sideM); loop.position.y=2.3; grp.add(loop);
+  grp.rotation.set(-.12,-.46,.08); scene.add(grp);
+  R.render(scene,cam); const url=R.domElement.toDataURL('image/png'); R.dispose(); return url;
+}
+// flat ribbon (2D), two stripes
+const ribbon=(w,h,a,b)=>`<svg width="${w}" height="${h}" viewBox="0 0 100 140"><path d="M8 0h38l20 140H28z" fill="${a}"/><path d="M54 0h38L72 140H34z" fill="${b}"/><path d="M28 140h44l-6-28H34z" fill="#0003"/></svg>`;
+
+const fonts=['300 50px Outfit','600 50px Outfit','700 50px Outfit','800 50px Outfit','900 50px Outfit','500 50px Inter','600 50px Inter','700 50px Inter','800 50px "Inter Tight"','700 50px "Inter Tight"'];
+Promise.all(fonts.map(f=>document.fonts.load(f))).then(()=>document.fonts.ready).then(build);
+
+function build(){
+  const S=$('stage');
+  PX.forEach((x,i)=>{add(S,`<div class="panel" id="P${i+1}" style="left:${x}px;background:${COL[i]}"></div>`);P.push($('P'+(i+1)));});
+
+  /* watermark + blobs, in stage coordinates, crossing the panels */
+  across((i,ox)=>`<div class="hl" style="left:${-260-ox}px;top:410px;font:900 520px/1 Outfit;letter-spacing:-.04em;color:${WM[i]};transform:rotate(-14deg);transform-origin:0 0;z-index:0">TEMPO TEMPO</div>`);
+  across((i,ox)=>`<svg class="abs" style="left:${-ox}px;top:0;z-index:0" width="1931" height="1311" viewBox="0 0 1931 1311">
+     <path d="M420 1080c90-60 230-40 300 40s60 210-40 260-260 30-320-40-30-200 60-260z" fill="${BLOB[i]}"/>
+     <path d="M1150 140c110-30 220 40 230 140s-80 170-190 170-190-80-180-170 30-110 140-140z" fill="${BLOB[i]}"/>
+     <circle cx="1700" cy="1180" r="170" fill="${BLOB[i]}"/></svg>`);
+
+  /* headlines: left-aligned Outfit, light lead-in + bold lines */
+  const head=(p,i,lead,l1,l2,body)=>{const ink=INK[i], fs=82;
+    let y=82; y+=T(p,lead,'300',34,44,y,ink,'opacity:.85')+26;
+    y+=T(p,l1,'700',fs,40,y,ink,'letter-spacing:-.035em')+20;
+    y+=T(p,l2,'700',fs,40,y,ink,'letter-spacing:-.035em')+30;
+    add(p,`<div class="abs" style="left:44px;top:${y}px;font:500 21px/1.4 Outfit;color:${ink};opacity:.82;width:430px;z-index:6">${body}</div>`);};
+
+  /* ---------- 1 · lime: phone tilted right ---------- */
+  const P1=P[0];
+  head(P1,0,'coaching that adapts','Run your','fastest 5K','A plan that learns from every run you log.');
+  add(P1,`<div class="abs" style="left:150px;top:470px;transform:rotate(9deg);transform-origin:50% 0;z-index:3;filter:drop-shadow(0 40px 50px rgba(30,50,0,.35))">${phone(440,screenRun())}</div>`);
+  // burst bars
+  add(P1,`<svg class="abs" style="left:24px;top:560px;z-index:2" width="150" height="170" viewBox="0 0 150 170"><g stroke="#0B0B0C" stroke-width="9" stroke-linecap="round"><path d="M110 40 60 10"/><path d="M104 84 30 84"/><path d="M110 128 62 158"/></g></svg>`);
+
+  /* ---------- 2 · cobalt: column of 3D medals + phone ---------- */
+  const P2=P[1];
+  head(P2,1,'your progress, in metal','Chase','every PB','Earn a medal each time you beat your best.');
+  add(P2,`<div class="abs" style="left:270px;top:560px;transform:rotate(-8deg);transform-origin:50% 0;z-index:3;filter:drop-shadow(0 40px 50px rgba(0,10,80,.45))">${phone(420,screenPB())}</div>`);
+  const M=[['5K','#FFBA32',['#C6F432','#0B0B0C']],['10K','#D9DCE3',['#FF4D3D','#fff']],['PB','#FFBA32',['#fff','#1640D6']]];
+  M.forEach(([f,c,[ra,rb]],j)=>{const y=590+j*228, x=[18,120,36][j], sz=205;
+    add(P2,`<div class="abs" style="left:${x+54}px;top:${y-78}px;z-index:4;transform:rotate(${-10+j*4}deg)">${ribbon(100,140,ra,rb)}</div>`);
+    add(P2,`<img class="abs" src="${medalImg(f,c)}" style="left:${x}px;top:${y}px;width:${sz}px;z-index:${5+j};filter:drop-shadow(0 22px 26px rgba(0,10,70,.45))">`);});
+  add(P2,`<svg class="abs" style="left:216px;top:500px;z-index:2" width="120" height="120" viewBox="0 0 120 120"><g stroke="#6F8DFF" stroke-width="8" stroke-linecap="round"><path d="M20 90 40 40"/><path d="M60 100 90 30"/><path d="M100 100 112 76"/></g></svg>`);
+
+  /* ---------- 3 · coral: phone lying far back + floating white card ---------- */
+  const P3=P[2];
+  head(P3,2,'built around you','Plans that fit','your week','Workouts that move when your week does.');
+  add(P3,`<div class="abs" style="left:96px;top:400px;width:420px;perspective:1300px;z-index:3">
+     <div style="transform:rotateX(52deg) rotateZ(-24deg);transform-origin:50% 50%;filter:drop-shadow(0 50px 40px rgba(110,10,0,.35))">${phone(420,screenPlan())}</div></div>`);
+  const bars=[20,34,14,34,14,34,14,34,14,34,14,34,22];
+  add(P3,`<div class="abs" style="left:46px;top:800px;width:500px;padding:26px 28px;border-radius:30px;background:#fff;color:#0B0B0C;transform:rotate(-11deg);z-index:6;box-shadow:0 36px 60px rgba(110,10,0,.35)">
+     <div style="display:flex;justify-content:space-between;font:700 13px Inter;letter-spacing:.12em"><span style="color:#FF4D3D">THURSDAY · KEY WORKOUT</span><span style="color:#8a8a84">38 MIN</span></div>
+     <div style="font:800 40px/1.05 'Inter Tight';letter-spacing:-.035em;margin-top:10px">Intervals 6 × 400 m</div>
+     <div style="font:500 16px Inter;color:#6f6f68;margin-top:6px">4:30 /km reps · 90 s easy jog between</div>
+     <div style="display:flex;align-items:flex-end;gap:5px;height:40px;margin:18px 0 18px">${bars.map((h,i)=>`<i style="flex:1;height:${h}px;border-radius:5px;background:${h>30?'#0B0B0C':'#e7e5df'}"></i>`).join('')}</div>
+     <div style="display:flex;gap:10px"><span style="flex:1;text-align:center;padding:15px 0;border-radius:16px;background:#0B0B0C;color:#D7FF3A;font:700 17px Inter">Start workout</span><span style="padding:15px 22px;border-radius:16px;background:#f1efe9;font:600 17px Inter">Move</span></div></div>`);
+}
+function fit(){const w=$('wrap').clientWidth-32,s=$('stage'),k=Math.min(1,w/1931);s.style.transform=`scale(${k})`;$('wrap').style.height=(1351*k+32)+'px'}
+addEventListener('resize',fit);addEventListener('load',fit);
+</script></body></html>
